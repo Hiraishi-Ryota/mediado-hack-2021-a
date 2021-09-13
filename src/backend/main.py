@@ -4,7 +4,9 @@ from fastapi import Depends, FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 
 from books.router import router as book_router
+from db import Base, engine
 
+Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 # books routerを登録する。

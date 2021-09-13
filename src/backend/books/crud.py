@@ -13,11 +13,15 @@ def get_books(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Book).offset(skip).limit(limit).all()
 
 
-def create_book(db: Session, book: schemas.BookCreate):
+def create_book(db: Session, book: schemas.BookCreateConfirm):
+    # TODO chapter
     db_book = models.Book(
-      price=book.price,
-      e_pub=book.e_pub,
-      # TODO all value
+      title = book.title,
+      price = book.price,
+      author = book.author,
+      word_count = book.word_count,
+      e_pub = book.e_pub,
+      cover_img = book.cover_img
     )
     db.add(db_book)
     db.commit()

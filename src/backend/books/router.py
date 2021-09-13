@@ -16,50 +16,60 @@ router = APIRouter()
 
 # Dependency
 def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+  db = SessionLocal()
+  try:
+    yield db
+  finally:
+    db.close()
 
 
-@router.post("/books/", response_model=schemas.Book)
-def save_upload_file_tmp(e_pub: UploadFile=File(...), price: int=Form(...), db: Session = Depends(get_db)):
-  """epubを保存し、dbに追加"""
+@router.post("/books/", response_model=schemas.BookCreateConfirm)
+def pre_add_book(e_pub: UploadFile=File(...), price: int=Form(...), db: Session = Depends(get_db)):
+  """epubを保存し、分解"""
   e_pub_path:Path = ""
+  # TODO 保存
   try:
     with NamedTemporaryFile(delete=False, suffix=Path(e_pub.filename).suffix) as tmp:
       shutil.copyfileobj(e_pub.file, tmp)
       e_pub_path = Path(tmp.name)
   finally:
     e_pub.file.close()
-  print(type(e_pub_path))
-  print(type("test"))
-  book = schemas.BookCreate(
+  # TODO epub parse
+  dummy_chapter = schemas.ChapterBase(
+    title = "dummy chaper title",
     price = price,
-    e_pub = str(e_pub_path),
+    author = "dummy chaper author",
   )
+  book = schemas.BookCreateConfirm(
+    title = "dummy title",
+    price = price,
+    author = "dummy author",
+    cover_img = "dummy path",
+    word_count = 100,
+    e_pub = str(e_pub_path),
+    chapters = [dummy_chapter]*3
+  )
+  return book
+
+@router.post("/books/confirm", response_model=schemas.BookDetail)
+def add_book(book: schemas.BookCreateConfirm, db: Session = Depends(get_db)):
+  """本の追加"""
   return create_book(db=db, book=book)
 
-# def create_book(book: schemas.BookCreate, db: Session = Depends(get_db)):
-#     db_book = crud.get_book_by_email(db, email=book.email)
-#     if db_book:
-#         raise HTTPException(status_code=400, detail="Email already registered")
-#     return crud.create_book(db=db, book=book)
+@router.get("/books/", response_model=List[schemas.Book])
+def all_books(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+  """本の一覧"""
+  books = get_books(db, skip=skip, limit=limit)
+  return books
 
 
-# @router.get("/books/", response_model=List[schemas.Book])
-# def read_books(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-#     books = crud.get_books(db, skip=skip, limit=limit)
-#     return books
-
-
-# @router.get("/books/{book_id}", response_model=schemas.Book)
-# def read_book(book_id: int, db: Session = Depends(get_db)):
-#     db_book = crud.get_book(db, book_id=book_id)
-#     if db_book is None:
-#         raise HTTPException(status_code=404, detail="Book not found")
-#     return db_book
+@router.get("/books/{book_id}", response_model=schemas.BookDetail)
+def find_book(book_id: int, db: Session = Depends(get_db)):
+  """本の詳細"""
+  db_book = get_book(db, book_id=book_id)
+  if db_book is None:
+      raise HTTPException(status_code=404, detail="Book not found")
+  return db_book
 
 
 # @router.post("/books/{book_id}/chapters/", response_model=schemas.Chapter)

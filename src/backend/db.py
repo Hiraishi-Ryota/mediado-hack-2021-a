@@ -14,14 +14,11 @@ DB_NAME = 'media_do_hack_2021'
 DATABASE_URL = f'{DATABASE}://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB_NAME}'
 
 engine = create_engine(
-  DATABASE_URL,
-  connect_args={"check_same_thread": False},
-  pool_pre_ping=True
+  DATABASE_URL
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
-Base.metadata.create_all(bind=engine)
 
 class BasicModel(Base):
   """ベースモデル"""
@@ -39,11 +36,4 @@ class BasicModel(Base):
     server_default=current_timestamp(),
     nullable=False,
     comment='登録日時',
-  )
-
-  updated_at = Column(
-    'updated_at',
-    TIMESTAMP(timezone=True),
-    onupdate=current_timestamp(),
-    comment='最終更新日時',
   )
