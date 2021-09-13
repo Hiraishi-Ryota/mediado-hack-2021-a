@@ -27,7 +27,6 @@ def get_db():
   finally:
     db.close()
 
-
 @router.post("/books/", response_model=schemas.BookCreateConfirm)
 def pre_add_book(e_pub: UploadFile=File(...), price: int=Form(...), db: Session = Depends(get_db)):
   """epubを保存＆分解"""
@@ -38,19 +37,20 @@ def pre_add_book(e_pub: UploadFile=File(...), price: int=Form(...), db: Session 
       e_pub_path = Path(tmp.name)
   finally:
     e_pub.file.close()
+
   # TODO epub parse
   dummy_chapter = schemas.ChapterBase(
-    title = "dummy chaper title",
-    price = price,
-    author = "dummy chaper author",
+    title = "",
+    price = 0,
+    author = "",
   )
   book = schemas.BookCreateConfirm(
-    title = "dummy title",
+    title = "",
     price = price,
-    author = "dummy author",
-    cover_img = "dummy path",
-    word_count = 100,
-    e_pub = str(e_pub_path),
+    author = "",
+    cover_img = "",
+    word_count = 0,
+    e_pub = str(e_pub_path.relative_to(BASE_DIR)),
     chapters = [dummy_chapter]*3
   )
   return book
@@ -58,14 +58,18 @@ def pre_add_book(e_pub: UploadFile=File(...), price: int=Form(...), db: Session 
 @router.post("/books/confirm", response_model=schemas.BookDetail)
 def add_book(book: schemas.BookCreateConfirm, db: Session = Depends(get_db)):
   """本の追加"""
-  return create_book(db=db, book=book)
+  db_book = create_book(db=db, book=book)
+  for chapter in book.chapters:
+    # TODO GET ベクトル
+    matrix_row = 0
+    db_book.chapters.append(create_chapter(db=db, chapter=chapter, book_id=db_book.id, matrix_row=matrix_row))
+  return db_book
 
 @router.get("/books/", response_model=List[schemas.Book])
 def all_books(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
   """本の一覧"""
   books = get_books(db, skip=skip, limit=limit)
   return books
-
 
 @router.get("/books/{book_id}", response_model=schemas.BookDetail)
 def find_book(book_id: int, db: Session = Depends(get_db)):

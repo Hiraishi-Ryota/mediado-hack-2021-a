@@ -7,9 +7,11 @@ class ChapterBase(BaseModel):
   title: str
   price: int
   author: str
+  e_pub: str
+  word_count: int
 
 
-class ChapterCreate():
+class ChapterCreate(ChapterBase):
   pass
 
 
@@ -21,19 +23,9 @@ class Chapter(ChapterBase):
     orm_mode = True
 
 
-class BookCreateConfirm(BaseModel):
-  title: str
-  price: int
-  author: str
+class BookCreateConfirm(ChapterBase):
   cover_img: str
-  price: int
-  e_pub: str
-  word_count: int
-  chapters: List[ChapterBase] = []
-
-
-class BookCreate(BaseModel):
-  e_pub: str
+  chapters: List[ChapterCreate] = []
 
 
 class Book(BaseModel):
@@ -42,7 +34,6 @@ class Book(BaseModel):
   price: int
   author: str
   cover_img: str
-  price: int
 
 
 class BookDetail(Book):
