@@ -22,13 +22,12 @@ class Chapter(ChapterBase):
 
 
 class BookBase(BaseModel):
-  title: str
+  # title: str
   price: int
-  author: str
 
 
 class BookCreate(BookBase):
-  pass
+  e_pub: str
 
 
 class Book(BookBase):

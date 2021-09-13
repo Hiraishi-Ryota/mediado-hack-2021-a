@@ -1,12 +1,12 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-from .db import BaseModel
+from db import BasicModel
 
-class Book(BaseModel):
+class Book(BasicModel):
   __tablename__ = "books"
 
-  title = Column(String, nullable=False, index=True, comment='タイトル')
+  title = Column(String, unique=True, nullable=False, index=True, comment='タイトル')
   price = Column(Integer, nullable=False, index=True, comment='値段(税抜き)')
   author = Column(String, nullable=False, index=True, comment='著者')
   page = Column(Integer, comment='総ページ数')
@@ -16,7 +16,7 @@ class Book(BaseModel):
   chapters = relationship("Chapter", back_populates="book")
 
 
-class Chapter(BaseModel):
+class Chapter(BasicModel):
   __tablename__ = "chapters"
 
   title = Column(String, nullable=False, index=True, comment='タイトル')

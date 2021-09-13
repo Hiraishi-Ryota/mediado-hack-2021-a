@@ -6,14 +6,18 @@ from . import models, schemas
 def get_book(db: Session, book_id: int):
   return db.query(models.Book).filter(models.Book.id == book_id).first()
 
+# def get_book_by_title(db: Session, title: str):
+#   return db.query(models.Book).filter(models.Book.title == title).first()
+
 def get_books(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Book).offset(skip).limit(limit).all()
 
 
 def create_book(db: Session, book: schemas.BookCreate):
     db_book = models.Book(
-      email=book.email,
-      hashed_password=fake_hashed_password
+      price=book.price,
+      e_pub=book.e_pub,
+      # TODO all value
     )
     db.add(db_book)
     db.commit()
