@@ -25,11 +25,11 @@ export default new Router({
       component: BookList,
     },
     {
-      path: '/book_details',
+      path: '/book_details/:id',
       component: BookDetails,
     },
     {
-      path: '/read_screen/:title',
+      path: '/read_screen/:id/:title',
       component: ReadScreen,
       props: true,
     },
