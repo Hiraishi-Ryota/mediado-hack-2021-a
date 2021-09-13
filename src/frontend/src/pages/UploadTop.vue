@@ -1,9 +1,20 @@
 <template>
   <div>
-    アップロード画面トップ
+    <Header :color="color"></Header>
   </div>
 </template>
 
 <script>
-export default {}
+import Header from '../components/Header.vue'
+
+export default {
+  components: {
+    Header
+  },
+  data() {
+    return {
+      color: 'orange'
+    }
+  }
+}
 </script>
