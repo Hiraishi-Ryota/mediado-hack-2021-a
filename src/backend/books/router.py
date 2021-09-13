@@ -1,10 +1,12 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, FastAPI, HTTPException, File, UploadFile, Form
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form
+import os
 from pathlib import Path
 import shutil
 from sqlalchemy.orm import Session
 from tempfile import NamedTemporaryFile
+import uuid
 
 from .crud import *
 from .models import *
@@ -13,6 +15,9 @@ from db import SessionLocal
 
 
 router = APIRouter()
+
+BASE_DIR = os.getcwd()
+E_PUB_DIR = "static/bookshelf"
 
 # Dependency
 def get_db():
@@ -25,11 +30,10 @@ def get_db():
 
 @router.post("/books/", response_model=schemas.BookCreateConfirm)
 def pre_add_book(e_pub: UploadFile=File(...), price: int=Form(...), db: Session = Depends(get_db)):
-  """epubを保存し、分解"""
+  """epubを保存＆分解"""
   e_pub_path:Path = ""
-  # TODO 保存
   try:
-    with NamedTemporaryFile(delete=False, suffix=Path(e_pub.filename).suffix) as tmp:
+    with NamedTemporaryFile(delete=False, suffix=Path(e_pub.filename).suffix, dir=E_PUB_DIR) as tmp:
       shutil.copyfileobj(e_pub.file, tmp)
       e_pub_path = Path(tmp.name)
   finally:

@@ -6,7 +6,7 @@ from db import BasicModel
 class Book(BasicModel):
   __tablename__ = "books"
 
-  title = Column(String, unique=True, nullable=False, index=True, comment='タイトル')
+  title = Column(String, nullable=False, index=True, comment='タイトル')
   price = Column(Integer, nullable=False, index=True, comment='値段(税抜き)')
   author = Column(String, nullable=False, index=True, comment='著者')
   word_count = Column(Integer, comment='文字数')

@@ -46,6 +46,7 @@ class Book(BaseModel):
 
 
 class BookDetail(Book):
+  e_pub: str
   word_count: int
   chapters: List[Chapter] = []
 
