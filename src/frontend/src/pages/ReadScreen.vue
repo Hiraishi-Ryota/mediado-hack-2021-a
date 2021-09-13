@@ -12,42 +12,5 @@
 </template>
 
 <script>
-export default {
-  //   methods: {
-  //     runScript() {
-  //       // 参考:https://qiita.com/sakapun/items/7d78f48debb4fd6156cb
-  //       const scripts = this.$el.querySelectorAll('script')
-  //       scripts.forEach((script) => {
-  //         const parentNode = script.parentNode
-  //         let alternativeNode
-  //         // todo: ホワイトリスト方式にする
-  //         if (
-  //           script.src.indexOf('http://localhost:8000/static/bibi/and/jo.js') !==
-  //           -1
-  //         ) {
-  //           alternativeNode = document.createElement('iframe')
-  //           alternativeNode.src = URL.createObjectURL(
-  //             new Blob(['<!DOCTYPE html><title></title>' + script.outerHTML], {
-  //               type: 'text/html',
-  //             })
-  //           )
-  //           alternativeNode.onload = () => {
-  //             alternativeNode.height =
-  //               alternativeNode.contentDocument.body.scrollHeight + 50
-  //           }
-  //         } else {
-  //           alternativeNode = document.createElement('script')
-  //           alternativeNode.src = script.src
-  //         }
-  //         parentNode.replaceChild(alternativeNode, script)
-  //       })
-  //     },
-  //   },
-  //   mounted() {
-  //     this.runScript()
-  //   },
-  //   updated() {
-  //     this.runScript()
-  //   },
-}
+export default {}
 </script>
