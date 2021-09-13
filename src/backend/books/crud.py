@@ -10,7 +10,14 @@ def get_book(db: Session, book_id: int):
 #   return db.query(models.Book).filter(models.Book.title == title).first()
 
 def get_books(db: Session, skip: int = 0, limit: int = 100):
-  return db.query(models.Book).offset(skip).limit(limit).all()
+  books = db.query(
+    models.Book.id,
+    models.Book.title,
+    models.Book.price,
+    models.Book.author,
+    models.Book.cover_img,
+  ).offset(skip).limit(limit).all()
+  return books
 
 def create_book(db: Session, book: schemas.BookCreateConfirm):
   # TODO **book.dict()による方法
