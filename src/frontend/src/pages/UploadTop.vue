@@ -43,6 +43,7 @@
           color="orange"
           dark
           class="mx-auto mb-5"
+          @click="uploadData"
         >
           アップロード
         </v-btn>
@@ -61,6 +62,12 @@ export default {
   data() {
     return {
       color: 'orange'
+    }
+  },
+  methods: {
+    uploadData() {
+      // TODO: アップロード処理
+      this.$router.push('/upload_confirm')
     }
   }
 }
