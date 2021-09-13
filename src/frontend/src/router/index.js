@@ -29,8 +29,9 @@ export default new Router({
       component: BookDetails,
     },
     {
-      path: '/read_screen',
+      path: '/read_screen/:title',
       component: ReadScreen,
+      props: true,
     },
     {
       path: '/purchased_list',
