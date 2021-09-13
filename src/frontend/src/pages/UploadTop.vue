@@ -15,7 +15,7 @@
         </v-list-item-content>
       </v-list-item>
 
-      <v-list-item-group class="px-15">
+      <div class="px-15">
         <v-list-item>
           <v-list-item-content>
             <v-list-item-subtitle>以下の情報を入力してください。</v-list-item-subtitle>
@@ -35,7 +35,7 @@
             <span><input type="number" id="price"> 円</span>
           </v-list-item-content>
         </v-list-item>
-      </v-list-item-group>
+      </div>
 
       <v-card-actions>
         <v-btn
@@ -43,6 +43,7 @@
           color="orange"
           dark
           class="mx-auto mb-5"
+          @click="uploadData"
         >
           アップロード
         </v-btn>
@@ -61,6 +62,12 @@ export default {
   data() {
     return {
       color: 'orange'
+    }
+  },
+  methods: {
+    uploadData() {
+      // TODO: アップロード処理
+      this.$router.push('/upload_confirm')
     }
   }
 }
