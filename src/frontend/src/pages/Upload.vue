@@ -220,7 +220,7 @@ export default {
       this.upload = false
     },
     async registerData() {
-      TODO: e_pubのデータは必要か
+      // TODO: e_pubのデータは必要か
       const data = {
         title: this.bookTitle,
         price: this.confirmPrice,
