@@ -30,7 +30,7 @@ export default new Router({
       props: true,
     },
     {
-      path: '/read_screen/:id/:title',
+      path: '/read_screen/:bookId/:chapterId/:title',
       component: ReadScreen,
       props: true,
     },
