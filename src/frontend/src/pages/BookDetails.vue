@@ -2,6 +2,17 @@
   <div>
     <Header :color="color"></Header>
     <v-container>
+      <v-btn
+        elevation="2"
+        :ripple="false"
+        color="primary"
+        dark
+        large
+        rounded
+        class="font-weight-bold"
+        @click="gotoBack"
+        >一覧へ戻る</v-btn
+      >
       <v-col>
         <h1 class="text-center mt-8">{{ bookDetail.title }}</h1>
       </v-col>
@@ -36,6 +47,7 @@
         </v-col>
         <v-col cols="2" class="d-flex justify-center align-center">
           <v-btn
+            v-if="purchasedItems.includes(chapter.id)"
             elevation="2"
             :ripple="false"
             color="orange"
@@ -43,8 +55,20 @@
             large
             rounded
             class="font-weight-bold"
-            @click="gotoRead(chapter.e_pub, chapter.id)"
+            @click="gotoRead(chapter.e_pub)"
             >読む</v-btn
+          >
+          <v-btn
+            v-else
+            elevation="2"
+            :ripple="false"
+            color="primary"
+            dark
+            large
+            rounded
+            class="font-weight-bold"
+            @click="purchase(chapter.id)"
+            >購入</v-btn
           >
         </v-col>
       </v-row>
@@ -71,9 +95,22 @@ export default {
       bookDetail: {},
     }
   },
+  computed: {
+    purchasedItems() {
+      return this.$store.getters['getPurchasedItems']
+    },
+  },
   methods: {
+    purchase: function(chapterId) {
+      this.$store.commit('addId', chapterId)
+      alert('購入に成功しました！')
+    },
+    gotoBack: function() {
+      this.$router.push({
+        path: `/book_list`,
+      })
+    },
     gotoRead: function(epub, chapterId) {
-      console.log(chapterId)
       this.$router.push({
         path: `/read_screen/${this.$route.params['id']}/${chapterId}/${epub}`,
         params: {
@@ -82,6 +119,5 @@ export default {
       })
     },
   },
-  computed: {},
 }
 </script>
