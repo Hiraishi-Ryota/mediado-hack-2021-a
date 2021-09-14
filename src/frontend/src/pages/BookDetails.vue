@@ -54,16 +54,17 @@
 
 <script>
 import Header from '../components/Header.vue'
-// import axios from 'axios'
+import axios from 'axios'
 export default {
   components: {
     Header,
   },
-  // mounted: async function() {
-  //   const bookId = this.$route.params['id']
-  //   this.bookDetail = await axios.get(`http://18.183.167.68/books/${bookId}`)
-  //   console.log(this.bookDetail)
-  // },
+  mounted: async function() {
+    const bookId = this.$route.params['id']
+    const res = await axios.get(`http://18.183.167.68/books/${bookId}`)
+    this.bookDetail = res.data
+    console.log(this.bookDetail)
+  },
   data() {
     return {
       color: 'primary',

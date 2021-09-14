@@ -12,16 +12,16 @@
         <v-divider></v-divider>
         <v-row
           v-for="recommendItem in recommendItems"
-          :key="recommendItem.bookId + recommendItem.chapterId"
+          :key="recommendItem.id"
           class="d-flex justify-center align-center my-4"
         >
           <v-col cols="8" class="mx-4 d-flex  justify-start">
-            <h4>{{ recommendItem.bookTitle }}</h4>
+            <h4>{{ recommendItem.book_title }}</h4>
           </v-col>
           <v-col cols="6" class="d-flex align-center mx-4">
-            <h2>{{ recommendItem.chapterId }}章：</h2>
+            <h2>{{ recommendItem.chapter_num }}章：</h2>
 
-            <h2>{{ recommendItem.chapterTitle }}</h2>
+            <h2>{{ recommendItem.title }}</h2>
           </v-col>
 
           <v-col cols="2" class="d-flex justify-center align-center">
@@ -59,7 +59,7 @@
 <script>
 import Vue from 'vue'
 import VS2 from 'vue-script2'
-// import axios from 'axios'
+import axios from 'axios'
 
 Vue.use(VS2)
 export default {
@@ -71,37 +71,27 @@ export default {
     // 本のタイトル
     title: { type: String, default: 'hogehoge' },
   },
-  // mounted: async function() {
-  //   //const bookId = this.$route.params['id']
-  //   //this.recommendItems = await axios.get(`http://18.183.167.68/books/${bookId}`)
-  // },
   data() {
     return {
       // モーダルを表示するか判定するフラグ
       dialog: false,
       recommendItems: [
         {
-          bookTitle: '本のタイトル',
-          bookId: 1,
-          author: '著者名',
-          chapterTitle: '章のタイトル',
-          chapterId: 1,
-          chapterPrice: 1000,
-          word_count: 10000,
-        },
-        {
-          bookTitle: '本2のタイトル',
-          bookId: 2,
-          author: '著者名2',
-          chapterTitle: '章のタイトル2',
-          chapterId: 1,
-          chapterPrice: 1000,
-          word_count: 10000,
+          title: 'string',
+          price: 0,
+          author: 'string',
+          e_pub: 'string',
+          word_count: 0,
+          id: 0,
+          chapter_num: 0,
+          book_id: 0,
+          book_title: 'string',
+          book_author: 'string',
         },
       ],
     }
   },
-  mounted: function() {
+  mounted: async function() {
     // 1度だけ再読み込み
     if (window.name != 'any') {
       location.reload()
@@ -109,6 +99,12 @@ export default {
     } else {
       window.name = ''
     }
+    const chapterId = this.$route.params['chapterId']
+    const res = await axios.get(
+      `http://18.183.167.68/chapters/recommend/${chapterId}`
+    )
+    this.recommendItems = res.data
+    console.log(this.recommendItems)
   },
   computed: {
     bibiLink: function() {
