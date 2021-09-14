@@ -10,7 +10,7 @@
       </v-row>
 
       <v-row class="mx-auto">
-        <v-col 
+        <v-col
           xs="12"
           sm="4"
           md="4"
@@ -18,16 +18,18 @@
           v-for="book in books"
           :key="book.id"
           @click="goToDetail(book.id)"
-          class="book"
+          class="book d-flex flex-column mb-5"
           v-ripple
+          max-height="420"
         >
-            
-            <v-img
-              :src="book.cover_img"
-              max-width="200"
-              class="mx-auto"
-            >
-            </v-img>
+          <v-img 
+            :src="book.cover_img"
+            max-width="200"
+            min-height="280"
+            class="mx-auto"
+            contain
+          ></v-img>
+
           <v-list max-width="200" class="mx-auto">
             <v-list-item>
               <h3 class="mx-auto my-3">{{ book.title }}</h3>
@@ -49,7 +51,6 @@
 
 <script>
 import Header from '../components/Header.vue'
-import axios from 'axios'
 
 export default {
   components: {
@@ -58,13 +59,45 @@ export default {
   data() {
     return {
       color: 'primary',
-      books: [],
+      books: [
+        {
+          id: 1,
+          title: '本の名前1',
+          author: '著者1著者1',
+          price: 1000,
+          cover_img: '',
+        },
+        {
+          id: 2,
+          title: '本の名前2',
+          author: '著者2',
+          price: 1500,
+          cover_img: '',
+        },
+        {
+          id: 3,
+          title: '本の名前3',
+          author: '著者3',
+          price: 5000,
+          cover_img:
+            'https://images-na.ssl-images-amazon.com/images/I/812NbfCwTvL.jpg',
+        },
+        {
+          id: 4,
+          title: '本の名前4',
+          author: '著者4',
+          price: 3000,
+          cover_img: 'https://t.pimg.jp/073/204/498/1/73204498.jpg',
+        },
+        {
+          id: 5,
+          title: '本の名前5',
+          author: '著者5',
+          price: 10000,
+          cover_img: 'https://www.abbeville.com/assets/common/images/edition_placeholder.png',
+        },
+      ],
     }
-  },
-  mounted: async function() {
-    const resBooks = await axios.get('http://18.183.167.68/books')
-    
-    this.books = resBooks.data
   },
   methods: {
     goToDetail(id) {
