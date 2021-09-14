@@ -8,7 +8,7 @@
       data-bibi="embed"
       data-bibi-style="width: 100%; height: 1000px;"
     ></a>
-    <script2 src="http://localhost:8000/static/bibi/and/jo.js"></script2>
+    <script2 src="http://3.112.191.246/static/bibi/and/jo.js"></script2>
 
     <v-dialog v-model="dialog" scrollable max-width="80%">
       <v-card>
@@ -52,7 +52,7 @@ export default {
   },
   computed: {
     bibiLink: function() {
-      return `http://localhost:8000/static/bibi/index.html?book=${this.title}.epub`
+      return `http://3.112.191.246/static/bibi/index.html?book=${this.title}.epub`
     },
   },
   methods: {
