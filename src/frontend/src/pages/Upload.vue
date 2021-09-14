@@ -195,6 +195,8 @@ export default {
       this.chapters = response.data.chapters
 
       this.upload = false
+
+      this.price = 0
     },
     async registerData() {
       const data = {
