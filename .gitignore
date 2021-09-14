@@ -1,6 +1,7 @@
 # Distribution / packaging
 .Python
 env/
+venv/
 build/
 develop-eggs/
 dist/
@@ -21,3 +22,8 @@ var/
 
 .DS_Store
 *.pyc
+
+*.pem
+
+*.model
+*.npy

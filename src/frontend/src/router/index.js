@@ -27,11 +27,12 @@ export default new Router({
     {
       path: '/book_list/:id',
       component: BookDetails,
-      props: true
+      props: true,
     },
     {
-      path: '/read_screen',
+      path: '/read_screen/:id/:title',
       component: ReadScreen,
+      props: true,
     },
     {
       path: '/purchased_list',

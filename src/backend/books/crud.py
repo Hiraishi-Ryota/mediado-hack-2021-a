@@ -1,4 +1,6 @@
+from sqlalchemy import desc
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import text
 
 from . import models, schemas
 
@@ -34,8 +36,11 @@ def create_book(db: Session, book: schemas.BookCreateConfirm):
   db.refresh(db_book)
   return db_book
 
-def get_chapters(db: Session, skip: int = 0, limit: int = 100):
-  return db.query(models.Chapter).offset(skip).limit(limit).all()
+def get_chapter(db: Session, chapter_id: int):
+  return db.query(models.Chapter).filter(models.Chapter.id == chapter_id).first()
+
+# def get_chapters(db: Session, skip: int = 0, limit: int = 100):
+#   return db.query(models.Chapter).offset(skip).limit(limit).all()
 
 def create_chapter(db: Session, chapter: schemas.ChapterCreate, book_id: int, matrix_row: float):
   db_chapter = models.Chapter(**chapter.dict(), book_id=book_id, matrix_row=matrix_row)
@@ -43,3 +48,20 @@ def create_chapter(db: Session, chapter: schemas.ChapterCreate, book_id: int, ma
   db.commit()
   db.refresh(db_chapter)
   return db_chapter
+
+def get_recommend_chapters(db: Session, chapter_id: int):
+  chapter = get_chapter(db=db, chapter_id=chapter_id)
+  recommend_chapters = db.query(
+    models.Chapter.id,
+    models.Chapter.title,
+    models.Chapter.price,
+    models.Chapter.author,
+    models.Chapter.e_pub,
+    models.Chapter.word_count,
+    models.Chapter.book_id,
+    models.Book.title.label("book_title"),
+    models.Book.author.label("book_author"),
+  ).order_by(text(f'abs(matrix_row - {chapter.matrix_row})')).\
+    join(models.Book, models.Book.id==models.Chapter.book_id).\
+    limit(5).all()
+  return recommend_chapters
