@@ -39,10 +39,12 @@ def pre_add_book(e_pub: UploadFile=File(...), price: int=Form(...), db: Session 
     e_pub.file.close()
 
   # TODO epub parse
-  dummy_chapter = schemas.ChapterBase(
+  dummy_chapter = schemas.ChapterCreate(
     title = "",
     price = 0,
     author = "",
+    e_pub = "",
+    word_count = 0
   )
   book = schemas.BookCreateConfirm(
     title = "",
