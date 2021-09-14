@@ -2,8 +2,8 @@ from sqlalchemy import desc
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import text
 
-from .models import *
-from .schemas import *
+from . import models
+from . import schemas
 
 
 def get_book(db: Session, book_id: int):
@@ -14,6 +14,7 @@ def get_book(db: Session, book_id: int):
 #   return db.query(models.Book).filter(models.Book.title == title).first()
 
 def get_books(db: Session, skip: int = 0, limit: int = 100):
+    # TODO structScanような読み取り
     books = db.query(
         models.Book.id,
         models.Book.title,
@@ -24,7 +25,7 @@ def get_books(db: Session, skip: int = 0, limit: int = 100):
     return books
 
 
-def create_book(db: Session, book: BookCreateConfirm):
+def create_book(db: Session, book: schemas.BookCreateConfirm):
     # TODO **book.dict()による方法
     db_book = models.Book(
         title=book.title,
@@ -47,7 +48,8 @@ def get_chapter(db: Session, chapter_id: int):
 # def get_chapters(db: Session, skip: int = 0, limit: int = 100):
 #   return db.query(models.Chapter).offset(skip).limit(limit).all()
 
-def create_chapter(db: Session, chapter: ChapterCreate, book_id: int, matrix_row: float):
+
+def create_chapter(db: Session, chapter: schemas.ChapterCreate, book_id: int, matrix_row: float):
     db_chapter = models.Chapter(**chapter.dict(), book_id=book_id, matrix_row=matrix_row)
     db.add(db_chapter)
     db.commit()
