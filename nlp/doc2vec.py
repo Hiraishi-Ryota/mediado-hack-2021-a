@@ -3,7 +3,12 @@ from janome.tokenizer import Tokenizer
 import numpy as np
 import pickle
 
-model = models.Doc2Vec.load('doc2vec.model')
+# これはサーバー実行時に起動する
+try:
+    model = models.Doc2Vec.load('doc2vec.model')
+except:
+    pass
+
 tokenizer = Tokenizer()
 
 vectors_path = "vectors.pkl"
@@ -78,5 +83,5 @@ if __name__ == "__main__":
     print("cというIDで追加")
     add_vector("d", "猿も木から落ちる")
 
-    print("aというIDのドキュメントと似たドキュメントのIDを最大1件返します")
+    print("aというIDのドキュメントと似たドキュメントのIDを最大5件返します")
     print(search_vector("a", 5))

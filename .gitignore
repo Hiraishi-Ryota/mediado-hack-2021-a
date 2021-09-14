@@ -23,6 +23,9 @@ var/
 .DS_Store
 *.pyc
 
+# pyCharm
+.idea/
+
 *.pem
 
 *.model
