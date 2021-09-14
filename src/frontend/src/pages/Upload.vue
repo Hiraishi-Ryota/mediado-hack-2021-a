@@ -160,6 +160,7 @@ export default {
       confirmPrice: 3000,
       coverImg: '',
       wordCount: 0,
+      ePub: '',
       chapters: [
         {
           title: '1章のタイトル',
@@ -194,9 +195,6 @@ export default {
     async uploadData() {
       this.success = false
       
-      console.log(this.file)
-      console.log(this.price)
-      
       let form = new FormData()
       form.append("e_pub", this.file);
       form.append("price", this.price);
@@ -208,31 +206,29 @@ export default {
       }
 
       const response = await axios.post('http://18.183.167.68/books', form, config)
-      console.log(response)
 
       this.bookTitle = response.title
       this.author = response.author
       this.confirmPrice = response.price
       this.coverImg = response.cover_img
       this.wordCount = response.word_count
+      this.ePub = response.e_pub
       this.chapters = response.chapters
 
       this.upload = false
     },
     async registerData() {
-      // TODO: e_pubのデータは必要か
       const data = {
         title: this.bookTitle,
         price: this.confirmPrice,
         author: this.author,
-        cover_img: this.coverImg,
+        e_pub: this.ePub,
         word_count: this.wordCount,
+        cover_img: this.coverImg,
         chapters: this.chapters
       }
 
-      const response = await axios.post('http://18.183.167.68/books/confirm', data)
-
-      console.log(response)
+      await axios.post('http://18.183.167.68/books/confirm', data)
 
       this.success = true
        
