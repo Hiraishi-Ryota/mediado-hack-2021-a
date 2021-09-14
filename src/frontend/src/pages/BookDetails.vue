@@ -2,6 +2,7 @@
   <div>
     <Header :color="color"></Header>
     <v-container>
+      {{ hoge }}
       <v-col>
         <h1 class="text-center mt-8">{{ bookDetail.title }}</h1>
       </v-col>
@@ -35,7 +36,7 @@
           <h3>{{ chapter.price }}円</h3>
         </v-col>
         <v-col cols="2" class="d-flex justify-center align-center">
-          <v-btn 
+          <v-btn
             elevation="2"
             :ripple="false"
             color="orange"
@@ -44,7 +45,7 @@
             rounded
             class="font-weight-bold"
             @click="gotoRead(chapter.e_pub)"
-          >読む</v-btn
+            >読む</v-btn
           >
         </v-col>
       </v-row>
@@ -110,6 +111,11 @@ export default {
         ],
       },
     }
+  },
+  computed: {
+    hoge() {
+      return this.$store.getters['getPurchasedItems']
+    },
   },
   methods: {
     gotoRead: function(epub) {
