@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import UploadTop from '@/pages/UploadTop'
+// import UploadTop from '@/pages/UploadTop'
+import Upload from '@/pages/Upload'
 import UploadConfirm from '@/pages/UploadConfirm'
 import BookList from '@/pages/BookList'
 import BookDetails from '@/pages/BookDetails'
@@ -14,7 +15,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      component: UploadTop,
+      component: Upload,
     },
     {
       path: '/upload_confirm',
