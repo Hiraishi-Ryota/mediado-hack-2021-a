@@ -2,6 +2,10 @@
   <div>
     <Header :color="color"></Header>
 
+    <v-alert v-if="success" type="success" dismissible>
+      本の情報を登録しました
+    </v-alert>
+
     <!-- アップロード画面 -->
     <v-card 
       v-if="upload"
@@ -149,6 +153,7 @@ export default {
   data() {
     return {
       color: 'orange',
+      success: false,
       upload: true,
       bookTitle: 'ワンピース',
       author: '尾田栄一郎',
@@ -187,6 +192,8 @@ export default {
       this.file = files[0]
     },
     async uploadData() {
+      this.success = false
+      
       console.log(this.file)
       console.log(this.price)
       
@@ -213,7 +220,7 @@ export default {
       this.upload = false
     },
     async registerData() {
-      // TODO: e_pubのデータは必要か
+      TODO: e_pubのデータは必要か
       const data = {
         title: this.bookTitle,
         price: this.confirmPrice,
@@ -227,6 +234,8 @@ export default {
 
       console.log(response)
 
+      this.success = true
+       
       this.upload = true
     }
   }
