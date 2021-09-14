@@ -58,7 +58,7 @@ export default {
   methods: {
     gotoDetails: function() {
       this.$router.push({
-        path: '/book_details/1',
+        path: '/book_list/1',
       })
     },
   },
