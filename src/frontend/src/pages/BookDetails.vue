@@ -55,7 +55,7 @@
             large
             rounded
             class="font-weight-bold"
-            @click="gotoRead(chapter.e_pub)"
+            @click="gotoRead(chapter.e_pub, chapter.id)"
             >読む</v-btn
           >
           <v-btn
@@ -111,6 +111,7 @@ export default {
       })
     },
     gotoRead: function(epub, chapterId) {
+      console.log(epub)
       this.$router.push({
         path: `/read_screen/${this.$route.params['id']}/${chapterId}/${epub}`,
         params: {
