@@ -1,23 +1,15 @@
-from typing import List
-
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form
-import os
-from pathlib import Path
-import shutil
 from sqlalchemy.orm import Session
-from tempfile import NamedTemporaryFile
-import uuid
+from typing import List
 
 from .crud import *
 from .models import *
 from .schemas import *
 from db import SessionLocal
+from utils.upload import upload
 
 
 router = APIRouter()
-
-BASE_DIR = os.getcwd()
-E_PUB_DIR = "static/bookshelf"
 
 # Dependency
 def get_db():
@@ -30,13 +22,14 @@ def get_db():
 @router.post("/books/", response_model=schemas.BookCreateConfirm)
 def pre_add_book(e_pub: UploadFile=File(...), price: int=Form(...), db: Session = Depends(get_db)):
   """epubを保存＆分解"""
-  e_pub_path:Path = ""
-  try:
-    with NamedTemporaryFile(delete=False, suffix=Path(e_pub.filename).suffix, dir=E_PUB_DIR) as tmp:
-      shutil.copyfileobj(e_pub.file, tmp)
-      e_pub_path = Path(tmp.name)
-  finally:
-    e_pub.file.close()
+  # e_pub_path:Path = ""
+  # try:
+  #   with NamedTemporaryFile(delete=False, suffix=Path(e_pub.filename).suffix, dir=E_PUB_DIR) as tmp:
+  #     shutil.copyfileobj(e_pub.file, tmp)
+  #     e_pub_path = Path(tmp.name)
+  # finally:
+  #   e_pub.file.close()
+  e_pub_path = upload(filename=e_pub.filename, file=e_pub.file, dir="static/bookshelf")
 
   # TODO epub parse
   dummy_chapter = schemas.ChapterCreate(
@@ -52,7 +45,7 @@ def pre_add_book(e_pub: UploadFile=File(...), price: int=Form(...), db: Session 
     author = "",
     cover_img = "",
     word_count = 0,
-    e_pub = str(e_pub_path.relative_to(BASE_DIR)),
+    e_pub = e_pub_path,
     chapters = [dummy_chapter]*3
   )
   return book
@@ -81,7 +74,6 @@ def find_book(book_id: int, db: Session = Depends(get_db)):
     raise HTTPException(status_code=404, detail="Book not found")
   return db_book
 
-
 @router.get("/chapters/recommend/{chapter_id}", response_model=List[schemas.RecommendChapter])
 def recommend_chapter(chapter_id: int, db: Session = Depends(get_db)):
   """おすすめの章"""
@@ -89,15 +81,3 @@ def recommend_chapter(chapter_id: int, db: Session = Depends(get_db)):
   if len(db_chapters) == 0:
     raise HTTPException(status_code=404, detail="Book not found")
   return db_chapters
-
-# @router.post("/books/{book_id}/chapters/", response_model=schemas.Chapter)
-# def create_chapter_for_book(
-#     book_id: int, chapter: schemas.ChapterCreate, db: Session = Depends(get_db)
-# ):
-#     return crud.create_book_chapter(db=db, chapter=chapter, book_id=book_id)
-
-
-# @app.get("/chapters/", response_model=List[schemas.Chapter])
-# def read_chapters(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-#     chapters = crud.get_chapters(db, skip=skip, limit=limit)
-#     return chapters
