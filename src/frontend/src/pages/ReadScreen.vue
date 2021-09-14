@@ -12,8 +12,31 @@
 
     <v-dialog v-model="dialog" scrollable max-width="80%">
       <v-card>
-        <v-card-title>お勧めの章</v-card-title>
+        <v-card-title>こちらの商品もどうでしょうか？</v-card-title>
         <v-divider></v-divider>
+        <v-row
+          v-for="recommendItem in recommendItems"
+          :key="recommendItem.bookId + recommendItem.chapterId"
+          class="d-flex justify-center align-center my-4"
+        >
+          <v-col cols="6" class="mx-4 d-flex  justify-start">
+            <h4>{{ recommendItem.bookTitle }}</h4>
+          </v-col>
+          <v-col cols="6" class="d-flex align-center mx-4">
+            <h2>{{ recommendItem.chapterId }}章：</h2>
+
+            <h2>{{ recommendItem.chapterTitle }}</h2>
+          </v-col>
+
+          <v-col cols="2" class="d-flex justify-center align-center">
+            <v-btn
+              elevation="2"
+              :ripple="false"
+              @click="gotoRead(chapter.e_pub)"
+              >読む</v-btn
+            >
+          </v-col>
+        </v-row>
         <v-col class="d-flex justify-center">
           <v-btn elevation="2" :ripple="false" @click="gotoDetails"
             >詳細へ戻る</v-btn
@@ -38,7 +61,28 @@ export default {
   },
   data() {
     return {
+      // モーダルを表示するか判定するフラグ
       dialog: false,
+      recommendItems: [
+        {
+          bookTitle: '本のタイトル',
+          bookId: 1,
+          author: '著者名',
+          chapterTitle: '章のタイトル',
+          chapterId: 1,
+          chapterPrice: 1000,
+          word_count: 10000,
+        },
+        {
+          bookTitle: '本2のタイトル',
+          bookId: 2,
+          author: '著者名2',
+          chapterTitle: '章のタイトル2',
+          chapterId: 1,
+          chapterPrice: 1000,
+          word_count: 10000,
+        },
+      ],
     }
   },
   mounted: function() {
