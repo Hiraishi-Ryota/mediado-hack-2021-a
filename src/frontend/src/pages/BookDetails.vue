@@ -21,6 +21,8 @@
           <v-img 
             :src="bookDetail.cover_img"
             max-width="200"
+            min-height="280"
+            contain
             class="mx-auto"
             v-on:error="() => bookDetail.cover_img = require('@/assets/coming_soon.png')"
           >
