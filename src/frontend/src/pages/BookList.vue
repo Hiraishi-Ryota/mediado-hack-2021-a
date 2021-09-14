@@ -58,47 +58,13 @@ export default {
   data() {
     return {
       color: 'primary',
-      books: [
-        {
-          id: 1,
-          title: '本の名前1',
-          price: 1000,
-          author: '著者1著者1',
-          cover_img: "https://images-na.ssl-images-amazon.com/images/I/812NbfCwTvL.jpg"
-        },
-        {
-          id: 2,
-          title: '本の名前2',
-          price: 1500,
-          author: '著者2',
-          cover_img: 'https://images-na.ssl-images-amazon.com/images/I/812NbfCwTvL.jpg'
-        },
-        {
-          id: 3,
-          title: '本の名前3',
-          price: 5000,
-          author: '著者3',
-          cover_img: 'https://images-na.ssl-images-amazon.com/images/I/812NbfCwTvL.jpg'
-        },
-        {
-          id: 4,
-          title: '本の名前4',
-          price: 3000,
-          author: '著者4',
-          cover_img: 'https://images-na.ssl-images-amazon.com/images/I/812NbfCwTvL.jpg'
-        },
-        {
-          id: 5,
-          title: '本の名前5',
-          price: 10000,
-          author: '著者5',
-          cover_img: 'https://images-na.ssl-images-amazon.com/images/I/812NbfCwTvL.jpg'
-        },
-      ],
+      books: [],
     }
   },
   mounted: async function() {
-    this.books = await axios.get('http://18.183.167.68/books')
+    const resBooks = await axios.get('http://18.183.167.68/books')
+    
+    this.books = resBooks.data
   },
   methods: {
     goToDetail(id) {
