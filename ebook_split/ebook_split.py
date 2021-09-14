@@ -108,9 +108,9 @@ class EpubSplit:
             spine.append(h)
 
         # CSSファイルを追加
-        for css in css_files:
-            css.set_name("Styles/" + css.get_name().split("/")[-1])
-            book.add_item(css)
+        # for css in css_files:
+        #     css.set_name("Styles/" + css.get_name().split("/")[-1])
+        #     book.add_item(css)
 
         # 目次の作成 TODO 目次をインスタンス変数化
         print(self.epub_data.toc[id-1])
