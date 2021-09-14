@@ -25,8 +25,9 @@ export default new Router({
       component: BookList,
     },
     {
-      path: '/book_details/:id',
+      path: '/book_list/:id',
       component: BookDetails,
+      props: true,
     },
     {
       path: '/read_screen/:id/:title',
