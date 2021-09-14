@@ -9,7 +9,7 @@
         </v-col>
       </v-row>
 
-      <v-row class="mx-auto d-flex justify-left">
+      <v-row class="mx-auto">
         <v-col 
           xs="12"
           sm="4"
@@ -23,7 +23,7 @@
         >
             
             <v-img
-              :src="book.img"
+              :src="book.cover_img"
               max-width="200"
               class="mx-auto"
             >
@@ -50,6 +50,7 @@
 
 <script>
 import Header from '../components/Header.vue'
+import axios from 'axios'
 
 export default {
   components: {
@@ -62,40 +63,43 @@ export default {
         {
           id: 1, 
           title: '本の名前1',
-          author: '著者1著者1',
           price: 1000,
-          img: "https://images-na.ssl-images-amazon.com/images/I/812NbfCwTvL.jpg"
+          author: '著者1著者1',
+          cover_img: "https://images-na.ssl-images-amazon.com/images/I/812NbfCwTvL.jpg"
         },
         {
           id: 2, 
           title: '本の名前2',
-          author: '著者2',
           price: 1500,
-          img: 'https://images-na.ssl-images-amazon.com/images/I/812NbfCwTvL.jpg'
+          author: '著者2',
+          cover_img: 'https://images-na.ssl-images-amazon.com/images/I/812NbfCwTvL.jpg'
         },
         {
           id: 3, 
           title: '本の名前3',
-          author: '著者3',
           price: 5000,
-          img: 'https://images-na.ssl-images-amazon.com/images/I/812NbfCwTvL.jpg'
+          author: '著者3',
+          cover_img: 'https://images-na.ssl-images-amazon.com/images/I/812NbfCwTvL.jpg'
         },
         {
           id: 4, 
           title: '本の名前4',
-          author: '著者4',
           price: 3000,
-          img: 'https://images-na.ssl-images-amazon.com/images/I/812NbfCwTvL.jpg'
+          author: '著者4',
+          cover_img: 'https://images-na.ssl-images-amazon.com/images/I/812NbfCwTvL.jpg'
         },
         {
           id: 5, 
           title: '本の名前5',
-          author: '著者5',
           price: 10000,
-          img: 'https://images-na.ssl-images-amazon.com/images/I/812NbfCwTvL.jpg'
+          author: '著者5',
+          cover_img: 'https://images-na.ssl-images-amazon.com/images/I/812NbfCwTvL.jpg'
         },
       ]
     }
+  },
+  mounted: async function() {
+    this.books = await axios.get('http://3.112.191.246/books')
   },
   methods: {
     goToDetail(id) {
