@@ -6,7 +6,7 @@
       data-bibi="embed"
       data-bibi-style="width: 100%; height: 1000px;"
     ></a>
-    <v-dialog v-model="dialog" width="80%">
+    <v-dialog v-model="dialog" width="50%">
       <v-card class="py-2">
         <v-card-title>こちらの商品もどうでしょうか？</v-card-title>
         <v-divider></v-divider>
@@ -28,8 +28,11 @@
             <v-btn
               elevation="2"
               :ripple="false"
+              color="primary"
+              large
+              rounded
               @click="() => gotoDetails(recommendItem.bookId)"
-              >詳細</v-btn
+              >本の詳細へ</v-btn
             >
           </v-col>
         </v-row>
