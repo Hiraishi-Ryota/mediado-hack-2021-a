@@ -76,9 +76,17 @@ def find_book(book_id: int, db: Session = Depends(get_db)):
   """本の詳細"""
   db_book = get_book(db, book_id=book_id)
   if db_book is None:
-      raise HTTPException(status_code=404, detail="Book not found")
+    raise HTTPException(status_code=404, detail="Book not found")
   return db_book
 
+
+@router.get("/chapters/recommend/{chapter_id}", response_model=List[schemas.RecommendChapter])
+def recommend_chapter(chapter_id: int, db: Session = Depends(get_db)):
+  """おすすめの章"""
+  db_chapters = get_recommend_chapters(db, chapter_id=chapter_id)
+  if len(db_chapters) == 0:
+    raise HTTPException(status_code=404, detail="Book not found")
+  return db_chapters
 
 # @router.post("/books/{book_id}/chapters/", response_model=schemas.Chapter)
 # def create_chapter_for_book(

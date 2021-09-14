@@ -23,6 +23,11 @@ class Chapter(ChapterBase):
     orm_mode = True
 
 
+class RecommendChapter(Chapter):
+  book_title: str
+  book_author: str
+
+
 class BookCreateConfirm(ChapterBase):
   cover_img: str
   chapters: List[ChapterCreate] = []
