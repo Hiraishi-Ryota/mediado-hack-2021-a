@@ -111,10 +111,11 @@ export default {
       })
     },
     gotoRead: function(epub, chapterId) {
-      let epubPathArray = epub.split('/')
-      console.log(epubPathArray[2])
+      const epubPathArray = epub.split('/')
+      //pathからファイル名だけ取り出し
+      const epubFileName = epubPathArray[2]
       this.$router.push({
-        path: `/read_screen/${this.$route.params['id']}/${chapterId}/${epubPathArray[2]}`,
+        path: `/read_screen/${this.$route.params['id']}/${chapterId}/${epubFileName}`,
       })
     },
   },
