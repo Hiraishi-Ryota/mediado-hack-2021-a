@@ -23,7 +23,7 @@
           max-height="420"
         >
           <v-img 
-            :src="book.cover_img"
+            :src="checkImage(book.cover_img)"
             max-width="200"
             min-height="280"
             class="mx-auto"
@@ -59,50 +59,19 @@ export default {
   data() {
     return {
       color: 'primary',
-      books: [
-        {
-          id: 1,
-          title: '本の名前1',
-          author: '著者1著者1',
-          price: 1000,
-          cover_img: '',
-        },
-        {
-          id: 2,
-          title: '本の名前2',
-          author: '著者2',
-          price: 1500,
-          cover_img: '',
-        },
-        {
-          id: 3,
-          title: '本の名前3',
-          author: '著者3',
-          price: 5000,
-          cover_img:
-            'https://images-na.ssl-images-amazon.com/images/I/812NbfCwTvL.jpg',
-        },
-        {
-          id: 4,
-          title: '本の名前4',
-          author: '著者4',
-          price: 3000,
-          cover_img: 'https://t.pimg.jp/073/204/498/1/73204498.jpg',
-        },
-        {
-          id: 5,
-          title: '本の名前5',
-          author: '著者5',
-          price: 10000,
-          cover_img: 'https://www.abbeville.com/assets/common/images/edition_placeholder.png',
-        },
-      ],
+      books: [],
     }
   },
   methods: {
     goToDetail(id) {
       this.$router.push(`/book_list/${id}`)
     },
+    checkImage(image) {
+      if(!image)
+        return require('@/assets/coming_soon.png')
+
+      return image
+    }
   },
 }
 </script>
