@@ -23,11 +23,12 @@
           max-height="420"
         >
           <v-img 
-            :src="checkImage(book.cover_img)"
+            :src="book.cover_img"
             max-width="200"
             min-height="280"
             class="mx-auto"
             contain
+            v-on:error="() => book.cover_img = require('@/assets/coming_soon.png')"
           ></v-img>
 
           <v-list max-width="200" class="mx-auto">
@@ -72,12 +73,6 @@ export default {
   methods: {
     goToDetail(id) {
       this.$router.push(`/book_list/${id}`)
-    },
-    checkImage(image) {
-      if(!image)
-        return require('@/assets/coming_soon.png')
-
-      return image
     }
   },
 }

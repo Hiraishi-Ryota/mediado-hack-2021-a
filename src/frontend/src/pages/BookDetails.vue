@@ -16,9 +16,14 @@
       <v-col>
         <h1 class="text-center mt-8">{{ bookDetail.title }}</h1>
       </v-col>
-      <v-row class="mb-5">
+      <v-row class="my-5">
         <v-col cols="6" class="d-flex justify-center align-center">
-          <v-img :src="bookDetail.cover_img" max-width="200" class="mx-auto">
+          <v-img 
+            :src="bookDetail.cover_img"
+            max-width="200"
+            class="mx-auto"
+            v-on:error="() => bookDetail.cover_img = require('@/assets/coming_soon.png')"
+          >
           </v-img>
         </v-col>
         <v-col cols="4" class="d-flex justify-center align-center">
@@ -117,7 +122,7 @@ export default {
           chapterId: chapterId,
         },
       })
-    },
+    }
   },
 }
 </script>
