@@ -161,28 +161,7 @@ export default {
       coverImg: '',
       wordCount: 0,
       ePub: '',
-      chapters: [
-        {
-          title: '1章のタイトル',
-          price: 600,
-          author: '尾田栄一郎'
-        },
-        {
-          title: '2章のタイトル',
-          price: 800,
-          author: '尾田栄一郎'
-        },
-        {
-          title: '3章のタイトル',
-          price: 900,
-          author: '尾田栄一郎'
-        },
-        {
-          title: '4章のタイトル',
-          price: 700,
-          author: '尾田栄一郎'
-        },
-      ],
+      chapters: [],
       price: 0,
       file: null
     }
@@ -207,13 +186,13 @@ export default {
 
       const response = await axios.post('http://18.183.167.68/books', form, config)
 
-      this.bookTitle = response.title
-      this.author = response.author
-      this.confirmPrice = response.price
-      this.coverImg = response.cover_img
-      this.wordCount = response.word_count
-      this.ePub = response.e_pub
-      this.chapters = response.chapters
+      this.bookTitle = response.data.title
+      this.author = response.data.author
+      this.confirmPrice = response.data.price
+      this.coverImg = response.data.cover_img
+      this.wordCount = response.data.word_count
+      this.ePub = response.data.e_pub
+      this.chapters = response.data.chapters
 
       this.upload = false
     },
@@ -228,7 +207,9 @@ export default {
         chapters: this.chapters
       }
 
-      await axios.post('http://18.183.167.68/books/confirm', data)
+      const response = await axios.post('http://18.183.167.68/books/confirm', data)
+
+      console.log(response.data)
 
       this.success = true
        
