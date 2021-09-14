@@ -1,18 +1,29 @@
-from typing import List
+from gensim import models
+from janome.tokenizer import Tokenizer
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from books.router import router as book_router
 from db import Base, engine
 
-Base.metadata.create_all(bind=engine)
-app = FastAPI()
+# レコメンドエンジンのセットアップ
+try:
+    model = models.Doc2Vec.load('doc2vec.model')
+except:
+    pass
+tokenizer = Tokenizer()
+vectors_path = "vectors.pkl"
 
+# DBのセットアップ
+Base.metadata.create_all(bind=engine)
+
+# fast apiのセットアップ
+app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
