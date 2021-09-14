@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form
 
 # from ebook_split.ebook_split import EpubSplit
-from .crud import *
-from .schemas import *
+from crud import *
+from schemas import *
 from db import SessionLocal
 from utils.upload import upload
 

@@ -2,7 +2,8 @@ from sqlalchemy import desc
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import text
 
-from . import models, schemas
+import models
+import schemas
 
 
 def get_book(db: Session, book_id: int):
