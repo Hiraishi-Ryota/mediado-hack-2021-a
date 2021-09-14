@@ -37,7 +37,10 @@
           </v-col>
         </v-row>
         <v-col class="d-flex justify-center ">
-          <v-btn elevation="2" :ripple="false" @click="() => gotoDetails(id)"
+          <v-btn
+            elevation="2"
+            :ripple="false"
+            @click="() => gotoDetails(bookId)"
             >詳細へ戻る</v-btn
           >
         </v-col>
@@ -56,15 +59,22 @@
 <script>
 import Vue from 'vue'
 import VS2 from 'vue-script2'
+// import axios from 'axios'
 
 Vue.use(VS2)
 export default {
   props: {
-    //本のid
-    id: { type: String, default: '0' },
-    //本のタイトル
+    // 本のid
+    bookId: { type: String, default: '0' },
+    // 章のid
+    chapterId: { type: String, default: '0' },
+    // 本のタイトル
     title: { type: String, default: 'hogehoge' },
   },
+  // mounted: async function() {
+  //   //const bookId = this.$route.params['id']
+  //   //this.recommendItems = await axios.get(`http://18.183.167.68/books/${bookId}`)
+  // },
   data() {
     return {
       // モーダルを表示するか判定するフラグ

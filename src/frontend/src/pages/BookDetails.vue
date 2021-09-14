@@ -35,7 +35,7 @@
           <h3>{{ chapter.price }}円</h3>
         </v-col>
         <v-col cols="2" class="d-flex justify-center align-center">
-          <v-btn 
+          <v-btn
             elevation="2"
             :ripple="false"
             color="orange"
@@ -43,8 +43,8 @@
             large
             rounded
             class="font-weight-bold"
-            @click="gotoRead(chapter.e_pub)"
-          >読む</v-btn
+            @click="gotoRead(chapter.e_pub, chapter.id)"
+            >読む</v-btn
           >
         </v-col>
       </v-row>
@@ -54,10 +54,16 @@
 
 <script>
 import Header from '../components/Header.vue'
+// import axios from 'axios'
 export default {
   components: {
     Header,
   },
+  // mounted: async function() {
+  //   const bookId = this.$route.params['id']
+  //   this.bookDetail = await axios.get(`http://18.183.167.68/books/${bookId}`)
+  //   console.log(this.bookDetail)
+  // },
   data() {
     return {
       color: 'primary',
@@ -112,9 +118,13 @@ export default {
     }
   },
   methods: {
-    gotoRead: function(epub) {
+    gotoRead: function(epub, chapterId) {
+      console.log(chapterId)
       this.$router.push({
-        path: `/read_screen/${this.$route.params['id']}/${epub}`,
+        path: `/read_screen/${this.$route.params['id']}/${chapterId}/${epub}`,
+        params: {
+          chapterId: chapterId,
+        },
       })
     },
   },
