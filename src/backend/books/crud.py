@@ -49,8 +49,8 @@ def get_chapter(db: Session, chapter_id: int):
 #   return db.query(models.Chapter).offset(skip).limit(limit).all()
 
 
-def create_chapter(db: Session, chapter: schemas.ChapterCreate, book_id: int, matrix_row: float):
-    db_chapter = models.Chapter(**chapter.dict(), book_id=book_id, matrix_row=matrix_row)
+def create_chapter(db: Session, chapter: schemas.ChapterCreate, book_id: int):
+    db_chapter = models.Chapter(**chapter.dict(), book_id=book_id)
     db.add(db_chapter)
     db.commit()
     db.refresh(db_chapter)
@@ -73,3 +73,19 @@ def get_recommend_chapters(db: Session, chapter_id: int):
         join(models.Book, models.Book.id == models.Chapter.book_id). \
         limit(5).all()
     return recommend_chapters
+
+
+def get_recommend_chapter(db: Session, chapter_id: int):
+    db_chapter = db.query(
+        models.Chapter.id,
+        models.Chapter.title,
+        models.Chapter.chapter_num,
+        models.Chapter.price,
+        models.Chapter.author,
+        models.Chapter.e_pub,
+        models.Chapter.word_count,
+        models.Chapter.book_id,
+        models.Book.title.label("book_title"),
+        models.Book.author.label("book_author"),
+    ).join(models.Book, models.Book.id == models.Chapter.book_id).filter(models.Chapter.id == chapter_id).first()
+    return db_chapter
