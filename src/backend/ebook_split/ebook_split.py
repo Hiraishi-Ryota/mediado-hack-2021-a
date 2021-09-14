@@ -11,7 +11,7 @@ from ebooklib.epub import EpubWriter, NAMESPACES, EpubHtml, Section, Link
 from ebooklib.utils import parse_string, parse_html_string
 from lxml import etree
 
-from src.backend.books import schemas
+from books import schemas
 
 
 # def flatten(iterable: Iterable):
