@@ -96,7 +96,6 @@ export default {
   computed: {
     bibiLink: function() {
       return `http://18.183.167.68/static/bibi/index.html?book=${this.epubFileName}`
-      // return `http://18.183.167.68/static/bibi/index.html?book=${this.title}.epub`
     },
   },
   methods: {
