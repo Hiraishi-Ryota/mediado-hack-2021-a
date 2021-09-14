@@ -5,38 +5,46 @@
       <v-col>
         <h1 class="text-center mt-8">{{ bookDetail.title }}</h1>
       </v-col>
-      <v-row>
+      <v-row class="mb-5">
         <v-col cols="6" class="d-flex justify-center align-center">
           <v-img :src="bookDetail.cover_img" max-width="200" class="mx-auto">
           </v-img>
         </v-col>
         <v-col cols="4" class="d-flex justify-center align-center">
-          <h2>
-            著者:{{ bookDetail.author }}
+          <h3>
+            著者：{{ bookDetail.author }}
             <p />
-            値段:{{ bookDetail.price }}
+            値段：{{ bookDetail.price }}円
             <p />
-            文字数:{{ bookDetail.word_count }}
-          </h2>
+            文字数：{{ bookDetail.word_count }}文字
+          </h3>
         </v-col>
       </v-row>
       <v-row
         v-for="(chapter, index) in bookDetail.chapters"
         :key="chapter.id"
-        class="mt-10"
+        class="my-5"
       >
         <v-col cols="2" class="d-flex justify-center align-center">
-          <h1 class="font-weight-bold">{{ index + 1 }}章</h1>
+          <h3>{{ index + 1 }}章</h3>
         </v-col>
         <v-col cols="6" class="d-flex justify-center align-center">
-          <h1>{{ chapter.title }}</h1>
+          <h3>{{ chapter.title }}</h3>
         </v-col>
         <v-col cols="2" class="d-flex justify-center align-center">
-          <h1>{{ chapter.price }}円</h1>
+          <h3>{{ chapter.price }}円</h3>
         </v-col>
         <v-col cols="2" class="d-flex justify-center align-center">
-          <v-btn elevation="2" :ripple="false" @click="gotoRead(chapter.e_pub)"
-            >読む</v-btn
+          <v-btn 
+            elevation="2"
+            :ripple="false"
+            color="orange"
+            dark
+            large
+            rounded
+            class="font-weight-bold"
+            @click="gotoRead(chapter.e_pub)"
+          >読む</v-btn
           >
         </v-col>
       </v-row>
