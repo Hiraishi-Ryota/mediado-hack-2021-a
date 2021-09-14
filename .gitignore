@@ -25,3 +25,8 @@ var/
 
 # pyCharm
 .idea/
+
+*.pem
+
+*.model
+*.npy
