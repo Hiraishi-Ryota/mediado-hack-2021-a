@@ -51,6 +51,7 @@
 
 <script>
 import Header from '../components/Header.vue'
+import axios from 'axios'
 
 export default {
   components: {
@@ -61,6 +62,12 @@ export default {
       color: 'primary',
       books: [],
     }
+  },
+  mounted: async function() {
+    const resBooks = await axios.get('http://18.183.167.68/books')
+    
+    this.books = resBooks.data
+    console.log(this.books)
   },
   methods: {
     goToDetail(id) {
