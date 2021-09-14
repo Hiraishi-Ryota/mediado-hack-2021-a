@@ -99,7 +99,7 @@ export default {
     }
   },
   mounted: async function() {
-    this.books = await axios.get('http://3.112.191.246/books')
+    this.books = await axios.get('http://18.183.167.68/books')
   },
   methods: {
     goToDetail(id) {
