@@ -111,9 +111,10 @@ export default {
       })
     },
     gotoRead: function(epub, chapterId) {
-      console.log(epub)
+      let epubPathArray = epub.split('/')
+      console.log(epubPathArray[2])
       this.$router.push({
-        path: `/read_screen/${this.$route.params['id']}/${chapterId}/${epub}`,
+        path: `/read_screen/${this.$route.params['id']}/${chapterId}/${epubPathArray[2]}`,
         params: {
           chapterId: chapterId,
         },

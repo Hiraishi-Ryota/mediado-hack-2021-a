@@ -69,7 +69,7 @@ export default {
     // 章のid
     chapterId: { type: String, default: '0' },
     // 本のタイトル
-    title: { type: String, default: 'hogehoge' },
+    epubFileName: { type: String, default: 'hogehoge' },
   },
   data() {
     return {
@@ -95,7 +95,8 @@ export default {
   },
   computed: {
     bibiLink: function() {
-      return `http://18.183.167.68/static/bibi/index.html?book=${this.title}.epub`
+      return `http://18.183.167.68/static/bibi/index.html?book=${this.epubFileName}`
+      // return `http://18.183.167.68/static/bibi/index.html?book=${this.title}.epub`
     },
   },
   methods: {
