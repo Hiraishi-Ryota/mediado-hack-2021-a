@@ -14,26 +14,27 @@ DB_NAME = 'media_do_hack_2021'
 DATABASE_URL = f'{DATABASE}://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB_NAME}'
 
 engine = create_engine(
-  DATABASE_URL
+    DATABASE_URL
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
+
 class BasicModel(Base):
-  """ベースモデル"""
-  __abstract__ = True
+    """ベースモデル"""
+    __abstract__ = True
 
-  id = Column(
-    INTEGER,
-    primary_key=True,
-    autoincrement=True,
-  )
+    id = Column(
+        INTEGER,
+        primary_key=True,
+        autoincrement=True,
+    )
 
-  created_at = Column(
-    'created_at',
-    TIMESTAMP(timezone=True),
-    server_default=current_timestamp(),
-    nullable=False,
-    comment='登録日時',
-  )
+    created_at = Column(
+        'created_at',
+        TIMESTAMP(timezone=True),
+        server_default=current_timestamp(),
+        nullable=False,
+        comment='登録日時',
+    )
