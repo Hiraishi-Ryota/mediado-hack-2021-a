@@ -115,9 +115,6 @@ export default {
       console.log(epubPathArray[2])
       this.$router.push({
         path: `/read_screen/${this.$route.params['id']}/${chapterId}/${epubPathArray[2]}`,
-        params: {
-          chapterId: chapterId,
-        },
       })
     },
   },
