@@ -12,11 +12,13 @@ class ChapterBase(BaseModel):
 
 
 class ChapterCreate(ChapterBase):
+    chapter_num: int
     pass
 
 
 class Chapter(ChapterBase):
     id: int
+    chapter_num: int
     book_id: int
 
     class Config:

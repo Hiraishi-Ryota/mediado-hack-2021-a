@@ -5,6 +5,7 @@ from .schemas import *
 from db import SessionLocal
 from utils.upload import upload
 
+from nlp.doc2vec import *
 
 router = APIRouter()
 
@@ -26,6 +27,7 @@ def pre_add_book(e_pub: UploadFile = File(...), price: int = Form(...)):
 
     # TODO epub parse
     dummy_chapter = ChapterCreate(
+        chapter_num=0,
         title="",
         price=0,
         author="",
@@ -49,9 +51,10 @@ def add_book(book: BookCreateConfirm, db: Session = Depends(get_db)):
     """本の追加"""
     db_book = create_book(db=db, book=book)
     for chapter in book.chapters:
-        # TODO GET ベクトル
-        matrix_row = 0
-        db_book.chapters.append(create_chapter(db=db, chapter=chapter, book_id=db_book.id, matrix_row=matrix_row))
+        # TODO テキスト取得
+        db_chapter = create_chapter(db=db, chapter=chapter, book_id=db_book.id)
+        db_book.chapters.append(db_chapter)
+        add_vector(str(db_chapter.id), "dummy_test")
     return db_book
 
 
@@ -74,7 +77,8 @@ def find_book(book_id: int, db: Session = Depends(get_db)):
 @router.get("/chapters/recommend/{chapter_id}", response_model=List[RecommendChapter])
 def recommend_chapter(chapter_id: int, db: Session = Depends(get_db)):
     """おすすめの章"""
-    db_chapters = get_recommend_chapters(db, chapter_id=chapter_id)
-    if len(db_chapters) == 0:
-        raise HTTPException(status_code=404, detail="Book not found")
+    chapter_ids = list(map(int, search_vector(str(chapter_id), 5)))
+    db_chapters = []
+    for id in chapter_ids:
+        db_chapters.append(get_recommend_chapter(db, chapter_id=id))
     return db_chapters

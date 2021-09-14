@@ -1,47 +1,84 @@
 <template>
   <div>
-    <v-btn elevation="2" :ripple="false" @click="dialog = true"
-      >詳細へ戻る</v-btn
-    >
+    <script2 src="http://18.183.167.68/static/bibi/and/jo.js"></script2>
     <a
       :href="bibiLink"
       data-bibi="embed"
       data-bibi-style="width: 100%; height: 1000px;"
     ></a>
-    <script2 src="http://3.112.191.246/static/bibi/and/jo.js"></script2>
-
-    <v-dialog v-model="dialog" scrollable max-width="80%">
-      <v-card>
-        <v-card-title>お勧めの章</v-card-title>
+    <v-dialog v-model="dialog" width="50%">
+      <v-card class="py-2">
+        <v-card-title>こちらの商品もどうでしょうか？</v-card-title>
         <v-divider></v-divider>
-        <v-col class="d-flex justify-center">
-          <v-btn elevation="2" :ripple="false" @click="gotoDetails"
+        <v-row
+          v-for="recommendItem in recommendItems"
+          :key="recommendItem.id"
+          class="d-flex justify-center align-center my-4"
+        >
+          <v-col cols="8" class="mx-4 d-flex  justify-start">
+            <h4>{{ recommendItem.book_title }}</h4>
+          </v-col>
+          <v-col cols="6" class="d-flex align-center mx-4">
+            <h2>{{ recommendItem.chapter_num }}章：</h2>
+
+            <h2>{{ recommendItem.title }}</h2>
+          </v-col>
+
+          <v-col cols="2" class="d-flex justify-center align-center">
+            <v-btn
+              elevation="2"
+              :ripple="false"
+              color="primary"
+              large
+              rounded
+              @click="() => gotoDetails(recommendItem.bookId)"
+              >本の詳細へ</v-btn
+            >
+          </v-col>
+        </v-row>
+        <v-col class="d-flex justify-center ">
+          <v-btn
+            elevation="2"
+            :ripple="false"
+            @click="() => gotoDetails(bookId)"
             >詳細へ戻る</v-btn
           >
         </v-col>
       </v-card>
     </v-dialog>
+    <v-btn
+      elevation="2"
+      :ripple="false"
+      @click="dialog = true"
+      class="backButton"
+      ><h2>詳細へ戻る</h2></v-btn
+    >
   </div>
 </template>
 
 <script>
 import Vue from 'vue'
 import VS2 from 'vue-script2'
+import axios from 'axios'
 
 Vue.use(VS2)
 export default {
   props: {
-    //本のid
-    id: { type: String, default: '0' },
-    //本のタイトル
+    // 本のid
+    bookId: { type: String, default: '0' },
+    // 章のid
+    chapterId: { type: String, default: '0' },
+    // 本のタイトル
     title: { type: String, default: 'hogehoge' },
   },
   data() {
     return {
+      // モーダルを表示するか判定するフラグ
       dialog: false,
+      recommendItems: [],
     }
   },
-  mounted: function() {
+  mounted: async function() {
     // 1度だけ再読み込み
     if (window.name != 'any') {
       location.reload()
@@ -49,20 +86,32 @@ export default {
     } else {
       window.name = ''
     }
+    const chapterId = this.$route.params['chapterId']
+    const res = await axios.get(
+      `http://18.183.167.68/chapters/recommend/${chapterId}`
+    )
+    this.recommendItems = res.data
+    console.log(this.recommendItems)
   },
   computed: {
     bibiLink: function() {
-      return `http://3.112.191.246/static/bibi/index.html?book=${this.title}.epub`
+      return `http://18.183.167.68/static/bibi/index.html?book=${this.title}.epub`
     },
   },
   methods: {
-    gotoDetails: function() {
+    gotoDetails: function(bookId) {
       this.$router.push({
-        path: '/book_list/1',
+        path: `/book_list/${bookId}`,
       })
     },
   },
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.backButton {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+</style>
