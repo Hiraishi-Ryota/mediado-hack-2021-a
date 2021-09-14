@@ -75,20 +75,7 @@ export default {
     return {
       // モーダルを表示するか判定するフラグ
       dialog: false,
-      recommendItems: [
-        {
-          title: 'string',
-          price: 0,
-          author: 'string',
-          e_pub: 'string',
-          word_count: 0,
-          id: 0,
-          chapter_num: 0,
-          book_id: 0,
-          book_title: 'string',
-          book_author: 'string',
-        },
-      ],
+      recommendItems: [],
     }
   },
   mounted: async function() {
