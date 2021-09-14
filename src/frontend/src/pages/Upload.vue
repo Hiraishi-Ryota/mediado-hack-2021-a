@@ -2,6 +2,7 @@
   <div>
     <Header :color="color"></Header>
 
+    <!-- アップロード画面 -->
     <v-card 
       v-if="upload"
       class="mx-auto mt-15"
@@ -51,6 +52,7 @@
       </v-card-actions>
     </v-card>
 
+    <!-- アップロード内容確認画面 -->
     <v-container v-else>
       <v-row>
         <v-col>
@@ -100,7 +102,7 @@
 
       <v-row 
         v-for="(chapter, index) in chapters"
-        :key="chapter.id"
+        :key="index"
       >
         <v-col cols="4" class="d-flex justify-center align-center">
           <v-header class="font-weight-bold">{{ index+1 }}章</v-header>
@@ -151,26 +153,28 @@ export default {
       bookTitle: 'ワンピース',
       author: '尾田栄一郎',
       confirmPrice: 3000,
+      coverImg: '',
+      wordCount: 0,
       chapters: [
         {
-          id: 1,
           title: '1章のタイトル',
-          price: 600
+          price: 600,
+          author: '尾田栄一郎'
         },
         {
-          id: 2,
           title: '2章のタイトル',
-          price: 800
+          price: 800,
+          author: '尾田栄一郎'
         },
         {
-          id: 3,
           title: '3章のタイトル',
-          price: 900
+          price: 900,
+          author: '尾田栄一郎'
         },
         {
-          id: 4,
           title: '4章のタイトル',
-          price: 700
+          price: 700,
+          author: '尾田栄一郎'
         },
       ],
       price: 0,
@@ -199,10 +203,30 @@ export default {
       const response = await axios.post('http://18.183.167.68/books', form, config)
       console.log(response)
 
+      this.bookTitle = response.title
+      this.author = response.author
+      this.confirmPrice = response.price
+      this.coverImg = response.cover_img
+      this.wordCount = response.word_count
+      this.chapters = response.chapters
+
       this.upload = false
     },
-    registerData() {
-      // TODO: 本の情報を登録する処理
+    async registerData() {
+      // TODO: e_pubのデータは必要か
+      const data = {
+        title: this.bookTitle,
+        price: this.confirmPrice,
+        author: this.author,
+        cover_img: this.coverImg,
+        word_count: this.wordCount,
+        chapters: this.chapters
+      }
+
+      const response = await axios.post('http://18.183.167.68/books/confirm', data)
+
+      console.log(response)
+
       this.upload = true
     }
   }
