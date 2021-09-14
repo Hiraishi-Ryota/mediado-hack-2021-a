@@ -26,14 +26,14 @@
         <v-list-item class="mb-8">
           <v-list-item-content>
             <label for="file" class="mb-2 font-weight-bold">epubデータ</label>
-            <input type="file" id="file">
+            <input type="file" id="file" @change="onImageUploaded">
           </v-list-item-content>
         </v-list-item>
 
         <v-list-item class="mb-8">
           <v-list-item-content>
             <label for="price" class="mb-2 font-weight-bold">本の値段</label>
-            <span><input type="number" id="price"> 円</span>
+            <span><input type="number" id="price" v-model="price"> 円</span>
           </v-list-item-content>
         </v-list-item>
       </div>
@@ -86,7 +86,7 @@
         </v-col>
         <v-col cols="2">
           <v-text-field
-            v-model="price"
+            v-model="confirmPrice"
             suffix="円"
           ></v-text-field>
         </v-col>
@@ -138,6 +138,7 @@
 
 <script>
 import Header from '../components/Header.vue'
+import axios from 'axios'
 
 export default {
   components: {
@@ -149,7 +150,7 @@ export default {
       upload: true,
       bookTitle: 'ワンピース',
       author: '尾田栄一郎',
-      price: 3000,
+      confirmPrice: 3000,
       chapters: [
         {
           id: 1,
@@ -171,12 +172,33 @@ export default {
           title: '4章のタイトル',
           price: 700
         },
-      ]
+      ],
+      price: 0,
+      file: null
     }
   },
   methods: {
-    uploadData() {
-      // TODO: アップロード処理
+    onImageUploaded(e) {
+      const files = e.target.files
+      this.file = files[0]
+    },
+    async uploadData() {
+      console.log(this.file)
+      console.log(this.price)
+      
+      let form = new FormData()
+      form.append("e_pub", this.file);
+      form.append("price", this.price);
+
+      const config = {
+        headers: {
+          'content-type': 'multipart/form-data'
+        }
+      }
+
+      const response = await axios.post('http://18.183.167.68/books', form, config)
+      console.log(response)
+
       this.upload = false
     },
     registerData() {
