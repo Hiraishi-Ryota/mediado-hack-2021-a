@@ -23,20 +23,20 @@ const store = new Vuex.Store({
       commit('addId')
     },
     addRecommendId({ commit }) {
-      commit('addReccomendId')
+      commit('addRecommendId')
     },
-    deleteReccomendId({ commit }) {
-      commit('deleteReccomendId')
+    deleteRecommendId({ commit }) {
+      commit('deleteRecommendId')
     },
   },
   mutations: {
     addId(state, payload) {
       state.purchasedItems.push(payload)
     },
-    addReccomendId(state, payload) {
-      state.purchasedItems = payload
+    addRecommendId(state, payload) {
+      state.recommendId = payload
     },
-    deleteReccomendId(state) {
+    deleteRecommendId(state) {
       state.recommendId = -1
     },
   },

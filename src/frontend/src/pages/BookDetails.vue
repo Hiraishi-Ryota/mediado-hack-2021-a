@@ -1,5 +1,6 @@
 <template>
   <div>
+    {{ recommendId }}
     <Header :color="color"></Header>
     <v-container>
       <v-btn
@@ -48,7 +49,15 @@
         <v-col cols="2" class="d-flex justify-center align-center">
           <h3>{{ index + 1 }}章</h3>
         </v-col>
-        <v-col cols="6" class="d-flex justify-center align-center">
+        <v-col
+          v-if="recommendId === chapter.id"
+          cols="6"
+          class="d-flex justify-center align-center "
+          style="background-color: #fffacd"
+        >
+          <h3>{{ chapter.title }}</h3>
+        </v-col>
+        <v-col v-else cols="6" class="d-flex justify-center align-center ">
           <h3>{{ chapter.title }}</h3>
         </v-col>
         <v-col cols="2" class="d-flex justify-center align-center">
@@ -108,6 +117,9 @@ export default {
     purchasedItems() {
       return this.$store.getters['getPurchasedItems']
     },
+    recommendId() {
+      return this.$store.getters['getRecommendId']
+    },
   },
   methods: {
     purchase: function(chapterId) {
@@ -115,11 +127,13 @@ export default {
       alert('購入に成功しました！')
     },
     gotoBack: function() {
+      this.$store.commit('deleteRecommendId')
       this.$router.push({
         path: `/book_list`,
       })
     },
     gotoRead: function(epub, chapterId) {
+      this.$store.commit('deleteRecommendId')
       const epubPathArray = epub.split('/')
       //pathからファイル名だけ取り出し
       const epubFileName = epubPathArray[2]
@@ -130,3 +144,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+recommendColor {
+  background-color: #fffacd;
+}
+</style>

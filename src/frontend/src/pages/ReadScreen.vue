@@ -101,7 +101,8 @@ export default {
     },
   },
   methods: {
-    gotoDetails: function(bookId) {
+    gotoDetails: function(bookId, chapterId) {
+      this.$store.commit('addRecommendId', chapterId)
       this.$router.push({
         path: `/book_list/${bookId}`,
       })
