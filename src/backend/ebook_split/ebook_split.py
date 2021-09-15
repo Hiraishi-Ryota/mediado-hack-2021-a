@@ -1,3 +1,4 @@
+import collections
 import re
 import uuid
 from io import BytesIO
@@ -8,17 +9,19 @@ import ebooklib
 from ebooklib import epub
 from ebooklib.epub import EpubWriter, EpubHtml
 
+
 from books import schemas
 from ebook_split import ebooklib_patch
 
 
-# def flatten(iterable: Iterable):
-#     for elm in iterable:
-#         # 仕様上文字列やバイト列は現れないため，チェックは省略
-#         if isinstance(elm, collections.abc.Iterable):
-#             yield from flatten(elm)
-#         else:
-#             yield elm
+def flatten(iterable: Iterable):
+    for elm in iterable:
+        # 仕様上文字列やバイト列は現れないため，チェックは省略
+        if isinstance(elm, collections.abc.Iterable):
+            yield from flatten(elm)
+        else:
+            yield elm
+
 
 # ライブラリの応急処置
 EpubWriter._get_nav = ebooklib_patch.my_get_nav
@@ -63,14 +66,16 @@ class EpubSplitter:
         """ Get a chapter of list from the toc of the book """
         toc = self.epub_data.toc
 
+        print(toc)
+
         regex_backslash = re.compile(r"\\[^\s]+")
         regex_white_space = re.compile(r"\s+")
 
         chapter_list = []
         for chapter in toc:
             html_list = []
-            html = chapter.href.split("#")[0]
             if isinstance(chapter, epub.Link):
+                html = chapter.href.split("#")[0]
                 title = chapter.title
 
                 title = regex_backslash.sub("", title)
@@ -81,14 +86,21 @@ class EpubSplitter:
                 html_list.append(html)
             else:
                 # TODO Sectionが存在する場合に対応する．
-                title = chapter.title
+                # title = chapter[0].title
+                #
+                # title = regex_backslash.sub("", title)
+                # title = regex_white_space.sub("", title)
 
-                title = regex_backslash.sub("", title)
-                title = regex_white_space.sub("", title)
-                pass
+                title = None
+                flatten_chapter = flatten(chapter)
 
+                for elm in flatten_chapter:
+                    html = elm.href.split("#")[0]
+                    if html not in html_list:
+                        html_list.append(html)
 
-
+                chapter_info = {"title": title, "html_list": html_list}
+                chapter_list.append(chapter_info)
 
         # flatten_toc = flatten(toc)
         # print(list(flatten_toc))
@@ -241,9 +253,7 @@ class EpubSplitter:
         book.add_item(epub.EpubNcx())
         book.add_item(nav)
 
-        # TODO 生成場所の調整
-        filename = f"static/bibi-bookshelf/{uuid.uuid4()}.epub"
-
+        filename = f"static/bookshelf/{uuid.uuid4()}.epub"
         try:
             epub.write_epub(filename, book)
         except:
@@ -298,6 +308,6 @@ def get_text_by_path(path: str):
 
 
 if __name__ == "__main__":
-    ebook_data = parse_ebook("/Users/h4d9x/Documents/バックエンド/Python/epub/cc-shared-culture.epub", 1000)
-    # print(ebook_data)
+    ebook_data = parse_ebook("/Users/h4d9x/mediado-hack-2021-a/src/backend/static/bookshelf/accessible_epub_3.epub", 1000)
+    print(ebook_data)
     # print(get_text_by_path("/Users/h4d9x/mediado-hack-2021-a/src/backend/static/bookshelf/5efe071c-65ef-4fb8-bc4d-c3ab156453b7.epub"))
