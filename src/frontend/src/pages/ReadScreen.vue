@@ -31,7 +31,9 @@
               color="primary"
               large
               rounded
-              @click="() => gotoDetails(recommendItem.bookId)"
+              @click="
+                () => gotoDetails(recommendItem.book_id, recommendItem.id)
+              "
               >本の詳細へ</v-btn
             >
           </v-col>
@@ -40,7 +42,7 @@
           <v-btn
             elevation="2"
             :ripple="false"
-            @click="() => gotoDetails(bookId)"
+            @click="() => gotoDetails(bookId, chapterId)"
             >詳細へ戻る</v-btn
           >
         </v-col>
@@ -99,7 +101,8 @@ export default {
     },
   },
   methods: {
-    gotoDetails: function(bookId) {
+    gotoDetails: function(bookId, chapterId) {
+      this.$store.commit('addRecommendId', chapterId)
       this.$router.push({
         path: `/book_list/${bookId}`,
       })
