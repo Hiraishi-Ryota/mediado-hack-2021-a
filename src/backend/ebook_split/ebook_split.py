@@ -8,7 +8,6 @@ import ebooklib
 from ebooklib import epub
 from ebooklib.epub import EpubWriter, EpubHtml
 
-
 from src.backend.books import schemas
 from src.backend.ebook_split import ebooklib_patch
 
@@ -242,7 +241,9 @@ class EpubSplitter:
         book.add_item(epub.EpubNcx())
         book.add_item(nav)
 
-        filename = f"../static/bookshelf/{uuid.uuid4()}.epub"
+        # TODO 生成場所の調整
+        filename = f"static/bibi-bookshelf/{uuid.uuid4()}.epub"
+
         try:
             epub.write_epub(filename, book)
         except:

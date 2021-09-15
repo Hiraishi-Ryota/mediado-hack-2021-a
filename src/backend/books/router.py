@@ -5,6 +5,7 @@ from .schemas import *
 from db import SessionLocal
 from utils.upload import upload
 
+from ebook_split.ebook_split import parse_ebook
 from nlp.doc2vec import *
 
 router = APIRouter()
@@ -21,29 +22,8 @@ def get_db():
 @router.post("/books/", response_model=BookCreateConfirm)
 def pre_add_book(e_pub: UploadFile = File(...), price: int = Form(...)):
     """epubを保存＆分解"""
-    e_pub_path = upload(filename=e_pub.filename, file=e_pub.file, dir="static/bookshelf")
-
-    # EpubSplit(e_pub_path).split_book()
-
-    # TODO epub parse
-    dummy_chapter = ChapterCreate(
-        chapter_num=0,
-        title="",
-        price=0,
-        author="",
-        e_pub="",
-        word_count=0
-    )
-    book = BookCreateConfirm(
-        title="",
-        price=price,
-        author="",
-        cover_img="",
-        word_count=0,
-        e_pub=e_pub_path,
-        chapters=[dummy_chapter] * 3
-    )
-    return book
+    e_pub_path = upload(filename=e_pub.filename, file=e_pub.file, dir="static/bibi-bookshelf")
+    return parse_ebook(e_pub_path, price)
 
 
 @router.post("/books/confirm", response_model=BookDetail)
