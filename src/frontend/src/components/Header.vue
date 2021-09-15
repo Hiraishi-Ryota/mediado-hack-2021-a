@@ -5,7 +5,9 @@
     dark
   >
     <v-app-bar-title>
-      {{ appName }}
+      <div style="width: 400px">
+        {{ appName }}
+      </div>
     </v-app-bar-title>
   </v-app-bar>
 </template>
