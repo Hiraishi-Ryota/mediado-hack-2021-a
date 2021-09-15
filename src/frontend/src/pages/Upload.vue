@@ -46,12 +46,19 @@
       <v-card-actions>
         <v-btn
           rounded
+          :loading="loading1"
           color="orange"
           dark
           class="mx-auto mb-5"
           @click="uploadData"
         >
           アップロード
+          <v-icon
+            right
+            dark
+          >
+            mdi-cloud-upload
+          </v-icon>
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -128,6 +135,7 @@
         <v-col class="d-flex justify-center">
           <v-btn
             rounded
+            :loading="loading2"
             color="orange"
             dark
             class="my-5"
@@ -155,9 +163,11 @@ export default {
       color: 'orange',
       success: false,
       upload: true,
-      bookTitle: 'ワンピース',
-      author: '尾田栄一郎',
-      confirmPrice: 3000,
+      loading1: false,
+      loading2: false,
+      bookTitle: '',
+      author: '',
+      confirmPrice: 0,
       coverImg: '',
       wordCount: 0,
       ePub: '',
@@ -173,6 +183,8 @@ export default {
     },
     async uploadData() {
       this.success = false
+
+      this.loading1 = true
       
       let form = new FormData()
       form.append("e_pub", this.file);
@@ -194,6 +206,8 @@ export default {
       this.ePub = response.data.e_pub
       this.chapters = response.data.chapters
 
+      this.loading1 = false
+
       this.upload = false
 
       this.price = 0
@@ -209,10 +223,14 @@ export default {
         chapters: this.chapters
       }
 
+      this.loading2 = true
+
       const response = await axios.post('http://18.183.167.68/books/confirm', data)
 
       console.log(response.data)
 
+      this.loading2 = false
+      
       this.success = true
        
       this.upload = true
