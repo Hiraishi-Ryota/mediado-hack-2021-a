@@ -86,11 +86,12 @@ class EpubSplitter:
                 html_list.append(html)
             else:
                 # TODO Sectionが存在する場合に対応する．
-                title = chapter[0].title
+                # title = chapter[0].title
+                #
+                # title = regex_backslash.sub("", title)
+                # title = regex_white_space.sub("", title)
 
-                title = regex_backslash.sub("", title)
-                title = regex_white_space.sub("", title)
-
+                title = None
                 flatten_chapter = flatten(chapter)
 
                 for elm in flatten_chapter:
