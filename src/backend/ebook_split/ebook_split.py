@@ -253,7 +253,7 @@ class EpubSplitter:
         book.add_item(epub.EpubNcx())
         book.add_item(nav)
 
-        filename = f"static/bookshelf/{uuid.uuid4()}.epub"
+        filename = f"static/bibi-bookshelf/{uuid.uuid4()}.epub"
         try:
             epub.write_epub(filename, book)
         except:
