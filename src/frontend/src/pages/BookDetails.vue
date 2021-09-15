@@ -33,8 +33,8 @@
             著者：{{ bookDetail.author }}
             <p />
             値段：{{ bookDetail.price }}円
-            <p />
-            文字数：{{ bookDetail.word_count }}文字
+            <!-- <p />
+            文字数：{{ bookDetail.word_count }}文字 -->
           </h3>
         </v-col>
       </v-row>
