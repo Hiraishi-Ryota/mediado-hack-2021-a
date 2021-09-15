@@ -67,9 +67,12 @@ export default {
     }
   },
   mounted: async function() {
-    const resBooks = await axios.get('http://18.183.167.68/books')
-
-    this.books = resBooks.data
+    const resBooks = await axios.get('http://18.183.167.68/books')    
+    this.books = resBooks.data.map((book => ({
+        ...book,
+        cover_img: `http://18.183.167.68/${book.cover_img}`
+      })
+    ))
     console.log(this.books)
   },
   methods: {
