@@ -74,7 +74,7 @@ export default {
   },
   methods: {
     goToDetail(id) {
-      this.$router.push(`/book_list/${id}/${0}`)
+      this.$router.push(`/book_list/${id}`)
     },
   },
 }

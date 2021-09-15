@@ -8,20 +8,36 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     purchasedItems: [-1],
+    recommendId: -1,
   },
   getters: {
     getPurchasedItems(state) {
       return state.purchasedItems
+    },
+    getRecommendId(state) {
+      return state.recommendId
     },
   },
   actions: {
     addIdAction({ commit }) {
       commit('addId')
     },
+    addRecommendId({ commit }) {
+      commit('addReccomendId')
+    },
+    deleteReccomendId({ commit }) {
+      commit('deleteReccomendId')
+    },
   },
   mutations: {
     addId(state, payload) {
       state.purchasedItems.push(payload)
+    },
+    addReccomendId(state, payload) {
+      state.purchasedItems = payload
+    },
+    deleteReccomendId(state) {
+      state.recommendId = -1
     },
   },
   plugins: [
