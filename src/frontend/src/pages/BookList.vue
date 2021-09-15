@@ -22,13 +22,15 @@
           v-ripple
           max-height="420"
         >
-          <v-img 
+          <v-img
             :src="book.cover_img"
             max-width="200"
             height="280"
             class="mx-auto"
             contain
-            v-on:error="() => book.cover_img = require('@/assets/coming_soon.png')"
+            v-on:error="
+              () => (book.cover_img = require('@/assets/coming_soon.png'))
+            "
           ></v-img>
 
           <v-list max-width="200" class="mx-auto">
@@ -65,8 +67,7 @@ export default {
     }
   },
   mounted: async function() {
-    const resBooks = await axios.get('http://18.183.167.68/books')
-    
+    const resBooks = await axios.get('http://18.183.167.68/books')    
     this.books = resBooks.data.map((book => ({
         ...book,
         cover_img: `http://18.183.167.68/${book.cover_img}`
@@ -77,7 +78,7 @@ export default {
   methods: {
     goToDetail(id) {
       this.$router.push(`/book_list/${id}`)
-    }
+    },
   },
 }
 </script>
