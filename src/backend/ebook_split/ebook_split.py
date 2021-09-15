@@ -8,8 +8,8 @@ import ebooklib
 from ebooklib import epub
 from ebooklib.epub import EpubWriter, EpubHtml
 
-from src.backend.books import schemas
-from src.backend.ebook_split import ebooklib_patch
+from books import schemas
+from ebook_split import ebooklib_patch
 
 
 # def flatten(iterable: Iterable):
@@ -135,7 +135,7 @@ class EpubSplitter:
         # カバー画像を保存
         cover_image = Image.open(BytesIO(self.cover_image.get_content()))
 
-        cover_image.save("../static/book_cover_img/" + cover_image_name)
+        cover_image.save("static/book_cover_img/" + cover_image_name)
 
         chapter_create_list = []
 
