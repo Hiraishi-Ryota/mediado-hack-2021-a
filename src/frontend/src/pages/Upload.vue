@@ -46,7 +46,7 @@
       <v-card-actions>
         <v-btn
           rounded
-          :loading="loading"
+          :loading="loading1"
           color="orange"
           dark
           class="mx-auto mb-5"
@@ -135,6 +135,7 @@
         <v-col class="d-flex justify-center">
           <v-btn
             rounded
+            :loading="loading2"
             color="orange"
             dark
             class="my-5"
@@ -162,7 +163,8 @@ export default {
       color: 'orange',
       success: false,
       upload: true,
-      loading: false,
+      loading1: false,
+      loading2: false,
       bookTitle: '',
       author: '',
       confirmPrice: 0,
@@ -182,7 +184,7 @@ export default {
     async uploadData() {
       this.success = false
 
-      this.loading = true
+      this.loading1 = true
       
       let form = new FormData()
       form.append("e_pub", this.file);
@@ -204,7 +206,7 @@ export default {
       this.ePub = response.data.e_pub
       this.chapters = response.data.chapters
 
-      this.loading = false
+      this.loading1 = false
 
       this.upload = false
 
@@ -221,10 +223,14 @@ export default {
         chapters: this.chapters
       }
 
+      this.loading2 = true
+
       const response = await axios.post('http://18.183.167.68/books/confirm', data)
 
       console.log(response.data)
 
+      this.loading2 = false
+      
       this.success = true
        
       this.upload = true
