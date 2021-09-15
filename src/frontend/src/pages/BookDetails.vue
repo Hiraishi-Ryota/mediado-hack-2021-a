@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{ recommendId }}
     <Header :color="color"></Header>
     <v-container>
       <v-btn
@@ -45,19 +44,14 @@
         v-for="(chapter, index) in bookDetail.chapters"
         :key="chapter.id"
         class="my-5"
+        v-bind:class="{
+          yellow: recommendId === chapter.id,
+        }"
       >
         <v-col cols="2" class="d-flex justify-center align-center">
           <h3>{{ index + 1 }}章</h3>
         </v-col>
-        <v-col
-          v-if="recommendId === chapter.id"
-          cols="6"
-          class="d-flex justify-center align-center "
-          style="background-color: #fffacd"
-        >
-          <h3>{{ chapter.title }}</h3>
-        </v-col>
-        <v-col v-else cols="6" class="d-flex justify-center align-center ">
+        <v-col cols="6" class="d-flex justify-center align-center ">
           <h3>{{ chapter.title }}</h3>
         </v-col>
         <v-col cols="2" class="d-flex justify-center align-center">
@@ -144,9 +138,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-recommendColor {
-  background-color: #fffacd;
-}
-</style>
