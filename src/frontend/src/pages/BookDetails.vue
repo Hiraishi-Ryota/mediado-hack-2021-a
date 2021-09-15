@@ -94,6 +94,8 @@ export default {
     const bookId = this.$route.params['id']
     const res = await axios.get(`http://18.183.167.68/books/${bookId}`)
     this.bookDetail = res.data
+    this.bookDetail.cover_img = `http://18.183.167.68/${this.bookDetail.cover_img}`
+
     console.log(this.bookDetail)
   },
   data() {
