@@ -31,7 +31,7 @@ export default new Router({
       props: true,
     },
     {
-      path: '/read_screen/:bookId/:chapterId/:title',
+      path: '/read_screen/:bookId/:chapterId/:epubFileName',
       component: ReadScreen,
       props: true,
     },

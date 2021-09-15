@@ -55,7 +55,7 @@
             large
             rounded
             class="font-weight-bold"
-            @click="gotoRead(chapter.e_pub)"
+            @click="gotoRead(chapter.e_pub, chapter.id)"
             >読む</v-btn
           >
           <v-btn
@@ -111,11 +111,11 @@ export default {
       })
     },
     gotoRead: function(epub, chapterId) {
+      const epubPathArray = epub.split('/')
+      //pathからファイル名だけ取り出し
+      const epubFileName = epubPathArray[2]
       this.$router.push({
-        path: `/read_screen/${this.$route.params['id']}/${chapterId}/${epub}`,
-        params: {
-          chapterId: chapterId,
-        },
+        path: `/read_screen/${this.$route.params['id']}/${chapterId}/${epubFileName}`,
       })
     },
   },
