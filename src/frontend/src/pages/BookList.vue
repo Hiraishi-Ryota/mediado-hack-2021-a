@@ -10,7 +10,7 @@
       </v-row>
 
       <v-row class="mx-auto">
-        <v-col 
+        <v-col
           xs="12"
           sm="4"
           md="4"
@@ -18,16 +18,19 @@
           v-for="book in books"
           :key="book.id"
           @click="goToDetail(book.id)"
-          class="book"
+          class="book d-flex flex-column mb-5"
           v-ripple
+          max-height="420"
         >
-            
-            <v-img
-              :src="book.cover_img"
-              max-width="200"
-              class="mx-auto"
-            >
-            </v-img>
+          <v-img 
+            :src="book.cover_img"
+            max-width="200"
+            height="280"
+            class="mx-auto"
+            contain
+            v-on:error="() => book.cover_img = require('@/assets/coming_soon.png')"
+          ></v-img>
+
           <v-list max-width="200" class="mx-auto">
             <v-list-item>
               <h3 class="mx-auto my-3">{{ book.title }}</h3>
@@ -65,11 +68,12 @@ export default {
     const resBooks = await axios.get('http://18.183.167.68/books')
     
     this.books = resBooks.data
+    console.log(this.books)
   },
   methods: {
     goToDetail(id) {
       this.$router.push(`/book_list/${id}`)
-    },
+    }
   },
 }
 </script>
