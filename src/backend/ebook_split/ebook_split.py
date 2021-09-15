@@ -1,4 +1,4 @@
-import os
+import re
 import uuid
 from io import BytesIO
 from PIL import Image
@@ -6,12 +6,10 @@ from typing import Iterable, List
 
 import ebooklib
 from ebooklib import epub
-from ebooklib.epub import EpubWriter, NAMESPACES, EpubHtml, Section, Link
-
-from ebooklib.utils import parse_string, parse_html_string
-from lxml import etree
+from ebooklib.epub import EpubWriter, EpubHtml
 
 from books import schemas
+from ebook_split import ebooklib_patch
 
 
 # def flatten(iterable: Iterable):
@@ -22,183 +20,12 @@ from books import schemas
 #         else:
 #             yield elm
 
-
-# ライブラリ修正用
-def _my_get_nav(self, item):
-    # just a basic navigation for now
-    nav_xml = parse_string(self.book.get_template('nav'))
-    root = nav_xml.getroot()
-
-    root.set('lang', self.book.language)
-    root.attrib['{%s}lang' % NAMESPACES['XML']] = self.book.language
-
-    nav_dir_name = os.path.dirname(item.file_name)
-
-    head = etree.SubElement(root, 'head')
-    title = etree.SubElement(head, 'title')
-    title.text = self.book.title
-
-    # for now this just handles css files and ignores others
-    for _link in item.links:
-        _lnk = etree.SubElement(head, 'link', {
-            'href': _link.get('href', ''), 'rel': 'stylesheet', 'type': 'text/css'
-        })
-
-    body = etree.SubElement(root, 'body')
-    nav = etree.SubElement(body, 'nav', {
-        '{%s}type' % NAMESPACES['EPUB']: 'toc',
-        'id': 'id',
-        'role': 'doc-toc',
-    })
-
-    content_title = etree.SubElement(nav, 'h2')
-    content_title.text = self.book.title
-
-    def _create_section(itm, items):
-        ol = etree.SubElement(itm, 'ol')
-        for item in items:
-            if isinstance(item, tuple) or isinstance(item, list):
-                li = etree.SubElement(ol, 'li')
-                if isinstance(item[0], EpubHtml):
-                    a = etree.SubElement(li, 'a', {'href': os.path.relpath(item[0].file_name, nav_dir_name)})
-                elif isinstance(item[0], Section) and item[0].href != '':
-                    a = etree.SubElement(li, 'a', {'href': os.path.relpath(item[0].href, nav_dir_name)})
-                elif isinstance(item[0], Link):
-                    a = etree.SubElement(li, 'a', {'href': os.path.relpath(item[0].href, nav_dir_name)})
-                else:
-                    a = etree.SubElement(li, 'span')
-                a.text = item[0].title
-
-                _create_section(li, item[1])
-
-            elif isinstance(item, Link):
-                li = etree.SubElement(ol, 'li')
-                a = etree.SubElement(li, 'a', {'href': os.path.relpath(item.href, nav_dir_name)})
-                a.text = item.title
-            elif isinstance(item, EpubHtml):
-                li = etree.SubElement(ol, 'li')
-                a = etree.SubElement(li, 'a', {'href': os.path.relpath(item.file_name, nav_dir_name)})
-                a.text = item.title
-
-    _create_section(nav, self.book.toc)
-
-    # LANDMARKS / GUIDE
-    # - http://www.idpf.org/epub/30/spec/epub30-contentdocs.html#sec-xhtml-nav-def-types-landmarks
-
-    if len(self.book.guide) > 0 and self.options.get('epub3_landmark'):
-
-        # Epub2 guide types do not map completely to epub3 landmark types.
-        guide_to_landscape_map = {
-            'notes': 'rearnotes',
-            'text': 'bodymatter'
-        }
-
-        guide_nav = etree.SubElement(body, 'nav', {'{%s}type' % NAMESPACES['EPUB']: 'landmarks'})
-
-        guide_content_title = etree.SubElement(guide_nav, 'h2')
-        guide_content_title.text = self.options.get('landmark_title', 'Guide')
-
-        guild_ol = etree.SubElement(guide_nav, 'ol')
-
-        for elem in self.book.guide:
-            li_item = etree.SubElement(guild_ol, 'li')
-
-            if 'item' in elem:
-                chap = elem.get('item', None)
-                if chap:
-                    _href = chap.file_name
-                    _title = chap.title
-            else:
-                _href = elem.get('href', '')
-                _title = elem.get('title', '')
-
-            guide_type = elem.get('type', '')
-            a_item = etree.SubElement(li_item, 'a', {
-                '{%s}type' % NAMESPACES['EPUB']: guide_to_landscape_map.get(guide_type, guide_type),
-                'href': os.path.relpath(_href, nav_dir_name)
-            })
-            a_item.text = _title
-
-    tree_str = etree.tostring(nav_xml, pretty_print=True, encoding='utf-8', xml_declaration=True)
-
-    return tree_str
+# ライブラリの応急処置
+EpubWriter._get_nav = ebooklib_patch.my_get_nav
+EpubHtml.get_content = ebooklib_patch.my_get_content
 
 
-# ライブラリ修正用
-def my_get_content(self, default=None):
-    """
-    Returns content for this document as HTML string. Content will be of type 'str' (Python 2)
-    or 'bytes' (Python 3).
-
-    :Args:
-      - default: Default value for the content if it is not defined.
-
-    :Returns:
-      Returns content of this document.
-    """
-
-    tree = parse_string(self.book.get_template(self._template_name))
-    tree_root = tree.getroot()
-
-    tree_root.set('lang', self.lang or self.book.language)
-    tree_root.attrib['{%s}lang' % NAMESPACES['XML']] = self.lang or self.book.language
-
-    # add to the head also
-    #  <meta charset="utf-8" />
-
-    try:
-        html_tree = parse_html_string(self.content)
-    except:
-        return ''
-
-    html_root = html_tree.getroottree()
-
-    # create and populate head
-
-    _head = etree.SubElement(tree_root, 'head')
-
-    if self.title != '':
-        _title = etree.SubElement(_head, 'title')
-        _title.text = self.title
-
-    for lnk in self.links:
-        lnk["href"] = "../" + lnk["href"]
-        if lnk.get('type') == 'text/javascript':
-            _lnk = etree.SubElement(_head, 'script', lnk)
-            # force <script></script>
-            _lnk.text = ''
-        else:
-            _lnk = etree.SubElement(_head, 'link', lnk)
-
-    # this should not be like this
-    # head = html_root.find('head')
-    # if head is not None:
-    #     for i in head.getchildren():
-    #         if i.tag == 'title' and self.title != '':
-    #             continue
-    #         _head.append(i)
-
-    # create and populate body
-
-    _body = etree.SubElement(tree_root, 'body')
-    if self.direction:
-        _body.set('dir', self.direction)
-
-    body = html_tree.find('body')
-    if body is not None:
-        for i in body.getchildren():
-            _body.append(i)
-
-    tree_str = etree.tostring(tree, pretty_print=True, encoding='utf-8', xml_declaration=True)
-
-    return tree_str
-
-
-EpubWriter._get_nav = _my_get_nav
-EpubHtml.get_content = my_get_content
-
-
-class EpubSplit:
+class EpubSplitter:
     def __init__(self, path: str) -> None:
         self.path = path
         self.epub_data = epub.read_epub(path)
@@ -211,29 +38,33 @@ class EpubSplit:
         except KeyError:
             self.cover_image = None
 
-        print(self.cover_image)
-
         try:
             self.creator = list(self.epub_data.get_metadata("DC", "creator"))[0][0]
         except KeyError:
             self.creator = None
 
-    def split_book(self):
-        html_files = list(self.epub_data.get_items_of_type(ebooklib.ITEM_DOCUMENT))
-        css_files = list(self.epub_data.get_items_of_type(ebooklib.ITEM_STYLE))
+        # epub内に含まれるファイル情報を取得
+        self.html_files = list(self.epub_data.get_items_of_type(ebooklib.ITEM_DOCUMENT))
+        self.css_files = list(self.epub_data.get_items_of_type(ebooklib.ITEM_STYLE))
 
-        css_files = [self._reconstruct_epub_item(css) for css in css_files]
+        self.css_files = [self._reconstruct_epub_item(css) for css in self.css_files]
 
-        chapter_list = self._procese_toc()
-        print(chapter_list)
+        self.img_files = list(self.epub_data.get_items_of_type(ebooklib.ITEM_IMAGE))
+        self.font_files = list(self.epub_data.get_items_of_type(ebooklib.ITEM_FONT))
+        self.audio_files = list(self.epub_data.get_items_of_type(ebooklib.ITEM_AUDIO))
+        self.video_files = list(self.epub_data.get_items_of_type(ebooklib.ITEM_VIDEO))
+        self.js_files = list(self.epub_data.get_items_of_type(ebooklib.ITEM_SCRIPT))
+        self.vector_files = list(self.epub_data.get_items_of_type(ebooklib.ITEM_VECTOR))
+        self.unknown_files = list(self.epub_data.get_items_of_type(ebooklib.ITEM_UNKNOWN))
 
-        # idは章番号を求めるために用いる
-        for id, chapter in enumerate(chapter_list):
-            self._create_book(id + 1, chapter["html_list"], html_files, css_files)
+        self.nav_files = list(self.epub_data.get_items_of_type(ebooklib.ITEM_NAVIGATION))
 
-    # Get a chapter of list from the toc of the book
     def _procese_toc(self) -> List:
+        """ Get a chapter of list from the toc of the book """
         toc = self.epub_data.toc
+
+        regex_backslash = re.compile(r"\\[^\s]+")
+        regex_white_space = re.compile(r"\s+")
 
         chapter_list = []
         for chapter in toc:
@@ -241,12 +72,23 @@ class EpubSplit:
             html = chapter.href.split("#")[0]
             if isinstance(chapter, epub.Link):
                 title = chapter.title
+
+                title = regex_backslash.sub("", title)
+                title = regex_white_space.sub("", title)
+
                 chapter_info = {"title": title, "html_list": html_list}
                 chapter_list.append(chapter_info)
                 html_list.append(html)
             else:
                 # TODO Sectionが存在する場合に対応する．
+                title = chapter.title
+
+                title = regex_backslash.sub("", title)
+                title = regex_white_space.sub("", title)
                 pass
+
+
+
 
         # flatten_toc = flatten(toc)
         # print(list(flatten_toc))
@@ -277,32 +119,33 @@ class EpubSplit:
         return chapter_list
 
     def _reconstruct_epub_item(self, item: epub.EpubItem):
+        """ Reconstruct epub_item to adopt the form of ebooklib """
         return epub.EpubItem(uid=item.get_id(), file_name="css/" + item.get_name().split("/")[-1],
                              content=item.get_content(), media_type="text/css", manifest=True)
 
     def create_chapters(self, path: str, price: int):
-        html_files = list(self.epub_data.get_items_of_type(ebooklib.ITEM_DOCUMENT))
-        css_files = list(self.epub_data.get_items_of_type(ebooklib.ITEM_STYLE))
-
-        css_files = [self._reconstruct_epub_item(css) for css in css_files]
+        """ create_chapters calls _create_chapter and return the book's information """
 
         chapter_list = self._procese_toc()
 
+        # ランダムなファイル名生成
         cover_image_name = self.cover_image.get_name().split("/")[-1]
+        cover_image_name = self._get_random_name(cover_image_name, 20)
 
         # カバー画像を保存
         cover_image = Image.open(BytesIO(self.cover_image.get_content()))
+
         cover_image.save("static/book_cover_img/" + cover_image_name)
 
         chapter_create_list = []
 
         # idは章番号を求めるために用いる
         for id, chapter in enumerate(chapter_list):
-            epub_path = self._create_book(id + 1, chapter["html_list"], html_files, css_files)
+            epub_path = self._create_chapter(id + 1, chapter["html_list"])
 
             chapter = schemas.ChapterCreate(
-                title=self.title,
-                price=price,
+                title=chapter["title"] != "" if chapter["title"] else "Chapter {}".format(id+1),
+                price=0,
                 author=self.creator,
                 e_pub=epub_path,
                 word_count=0,
@@ -314,7 +157,7 @@ class EpubSplit:
             title=self.title,
             price=price,
             author=self.creator,
-            cover_img=cover_image_name,
+            cover_img="static/book_cover_img/" + cover_image_name,
             word_count=0,
             e_pub=path,
             chapters=chapter_create_list
@@ -322,76 +165,139 @@ class EpubSplit:
 
         return ebook_data
 
-    # Create book from given arguments and instance variables
-    def _create_book(self, id: int, html_list: List[str], html_files: List, css_files: List):
+    def _create_chapter(self, id: int, html_list: List[str]):
+        """ Create chapter from given html_list and css_files """
+
         book = epub.EpubBook()
 
         # メタデータの設定
-        # TODO より多くのメタデータに対応(atuhor, publisher, contributorなど)
+        # TODO より多くのメタデータに対応(publisher, contributorなど)
         book.set_identifier("{}-{}".format(self.identifier, id))
         book.set_title(self.title)
         book.set_language(self.language)
         if self.creator is not None:
             book.add_author(self.creator)
 
-        # TODO カバー画像の追加
         book.add_item(self.cover_image)
 
         spine = []
 
         # CSSファイルを追加
-        for css in css_files:
+        for css in self.css_files:
             book.add_item(css)
+
+        # 画像ファイル追加
+        for img in self.img_files:
+            book.add_item(img)
+
+        # フォントファイル追加
+        for font in self.font_files:
+            book.add_item(font)
+
+        # オーディオファイルの追加
+        for audio in self.audio_files:
+            book.add_item(audio)
+
+        # 動画ファイルを追加
+        for video in self.video_files:
+            book.add_item(video)
+
+        # scriptファイルの追加
+        for js in self.js_files:
+            book.add_item(js)
+
+        # vectorファイルの追加
+        for vector in self.vector_files:
+            book.add_item(vector)
+
+        # そのほかのファイルの追加
+        for unknown in self.unknown_files:
+            book.add_item(unknown)
 
         # HTMLファイルを検索し，本に追加
         for html in html_list:
-            h = self._find_html(html, html_files)
+            h = self._find_html(html, self.html_files)
 
-            # TODO CSS
-            for css in css_files:
+            for css in self.css_files:
                 h.add_item(css)
 
             book.add_item(h)
             spine.append(h)
 
         # 目次の作成 TODO 目次をインスタンス変数化
-        print(self.epub_data.toc[id - 1])
+        # book.toc = self.epub_data.toc
+
+        # 目次のxhtmlファイル
+        nav = epub.EpubNav()
+
+        # 目次にもcssファイルを追加
+        for css in self.css_files:
+            nav.add_item(css)
 
         # TODO 目次の実装
         # book.toc = (self.epub_data.toc[id-1],)
-        book.spine = ["nav"] + spine
+        book.spine = [nav] + spine
 
         book.add_item(epub.EpubNcx())
-        book.add_item(epub.EpubNav())
+        book.add_item(nav)
 
         # TODO 生成場所の調整
         filename = f"static/bibi-bookshelf/{uuid.uuid4()}.epub"
+
         try:
             epub.write_epub(filename, book)
         except:
             filename = ""
         return filename
 
-    # Find target_html from html_files
     def _find_html(self, target_html: str, html_files):
+        """ Find target_html from html_files """
         for html_file in html_files:
             if target_html == html_file.get_name():
                 return html_file
 
-    # return item’s name (usually filename) of the file
-    def _get_item_names(self, items):
-        item_names = [item.get_name for item in items]
+    def _get_random_name(self, original_file_name: str, n: int):
+        """ Add random n characters to file_name """
+        file_split = original_file_name.split(".")
+
+        # name = [random.choice(string.ascii_letters + string.digits) for _ in range(n)]
+        #
+        # file_split[-2] += "".join(name)
+        file_split[-2] += ("-" + f"{uuid.uuid4()}")
+        return ".".join(file_split)
 
 
 def parse_ebook(path: str, price: int):
     # 本を分割する部分
-    book = EpubSplit(path)
+    book = EpubSplitter(path)
 
     ebook_data = book.create_chapters(path, price)
 
     return ebook_data
 
 
+def get_text_by_path(path: str):
+    book = epub.read_epub(path)
+    documents = book.get_items_of_type(ebooklib.ITEM_DOCUMENT)
+
+    text_list = [str(document.get_body_content()) for document in documents]
+    text = " ".join(text_list)
+
+    # タグなど，不要な情報を削除
+    regex_video_tag = re.compile(r"<video[^>]*>.*</video>")
+    regex_tag = re.compile(r"<[^>]*?>")
+    regex_backslash = re.compile(r"\\[^\s]+")
+    regex_white_space = re.compile(r"\s+")
+
+    s = regex_video_tag.sub("", text)
+    s = regex_tag.sub("", s)
+    s = regex_backslash.sub("", s)
+    s = regex_white_space.sub(" ", s)
+
+    return s
+
+
 if __name__ == "__main__":
     ebook_data = parse_ebook("/Users/h4d9x/Documents/バックエンド/Python/epub/cc-shared-culture.epub", 1000)
-    print(ebook_data)
+    # print(ebook_data)
+    # print(get_text_by_path("/Users/h4d9x/mediado-hack-2021-a/src/backend/static/bookshelf/5efe071c-65ef-4fb8-bc4d-c3ab156453b7.epub"))

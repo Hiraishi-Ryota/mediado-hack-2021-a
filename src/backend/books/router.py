@@ -5,7 +5,7 @@ from .schemas import *
 from db import SessionLocal
 from utils.upload import upload
 
-from ebook_split.ebook_split import parse_ebook
+from ebook_split.ebook_split import parse_ebook, get_text_by_path
 from nlp.doc2vec import *
 
 router = APIRouter()
@@ -34,7 +34,7 @@ def add_book(book: BookCreateConfirm, db: Session = Depends(get_db)):
         # TODO テキスト取得
         db_chapter = create_chapter(db=db, chapter=chapter, book_id=db_book.id)
         db_book.chapters.append(db_chapter)
-        add_vector(str(db_chapter.id), "dummy_test")
+        add_vector(str(db_chapter.id), get_text_by_path(db_chapter.e_pub))
     return db_book
 
 
