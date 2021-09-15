@@ -22,7 +22,7 @@ def get_db():
 @router.post("/books/", response_model=BookCreateConfirm)
 def pre_add_book(e_pub: UploadFile = File(...), price: int = Form(...)):
     """epubを保存＆分解"""
-    e_pub_path = upload(filename=e_pub.filename, file=e_pub.file, dir="static/bookshelf")
+    e_pub_path = upload(filename=e_pub.filename, file=e_pub.file, dir="static/bibi-bookshelf")
     return parse_ebook(e_pub_path, price)
 
 

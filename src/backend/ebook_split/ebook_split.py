@@ -365,7 +365,7 @@ class EpubSplit:
         book.add_item(epub.EpubNav())
 
         # TODO 生成場所の調整
-        filename = f"static/bookshelf/{uuid.uuid4()}.epub"
+        filename = f"static/bibi-bookshelf/{uuid.uuid4()}.epub"
         try:
             epub.write_epub(filename, book)
         except:
