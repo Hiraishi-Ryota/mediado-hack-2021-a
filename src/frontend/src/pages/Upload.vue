@@ -196,7 +196,7 @@ export default {
         }
       }
 
-      const response = await axios.post('http://18.183.167.68/books', form, config)
+      const response = await axios.post('http://18.183.167.68/books/', form, config)
 
       this.bookTitle = response.data.title
       this.author = response.data.author
