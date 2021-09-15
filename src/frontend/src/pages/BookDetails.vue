@@ -18,13 +18,15 @@
       </v-col>
       <v-row class="my-5">
         <v-col cols="6" class="d-flex justify-center align-center">
-          <v-img 
+          <v-img
             :src="bookDetail.cover_img"
             max-width="200"
             height="280"
             contain
             class="mx-auto"
-            v-on:error="() => bookDetail.cover_img = require('@/assets/coming_soon.png')"
+            v-on:error="
+              () => (bookDetail.cover_img = require('@/assets/coming_soon.png'))
+            "
           >
           </v-img>
         </v-col>
@@ -124,7 +126,7 @@ export default {
       this.$router.push({
         path: `/read_screen/${this.$route.params['id']}/${chapterId}/${epubFileName}`,
       })
-    }
+    },
   },
 }
 </script>
