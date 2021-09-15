@@ -49,6 +49,12 @@
 
 `create database media_do_hack_2021;`でデータベースを作成
 
-### 起動
+### local 起動
 
 `uvicorn main:app --reload`
+
+### 本番　起動
+
+ワーカー数、スレッド数は要調整
+
+`gunicorn --workers=4 --threads=2  -k uvicorn.workers.UvicornWorker main:app --log-level warning`
