@@ -18,13 +18,15 @@
       </v-col>
       <v-row class="my-5">
         <v-col cols="6" class="d-flex justify-center align-center">
-          <v-img 
+          <v-img
             :src="bookDetail.cover_img"
             max-width="200"
             height="280"
             contain
             class="mx-auto"
-            v-on:error="() => bookDetail.cover_img = require('@/assets/coming_soon.png')"
+            v-on:error="
+              () => (bookDetail.cover_img = require('@/assets/coming_soon.png'))
+            "
           >
           </v-img>
         </v-col>
@@ -33,8 +35,8 @@
             著者：{{ bookDetail.author }}
             <p />
             値段：{{ bookDetail.price }}円
-            <p />
-            文字数：{{ bookDetail.word_count }}文字
+            <!-- <p />
+            文字数：{{ bookDetail.word_count }}文字 -->
           </h3>
         </v-col>
       </v-row>
@@ -42,11 +44,14 @@
         v-for="(chapter, index) in bookDetail.chapters"
         :key="chapter.id"
         class="my-5"
+        v-bind:class="{
+          yellow: recommendId === chapter.id,
+        }"
       >
         <v-col cols="2" class="d-flex justify-center align-center">
           <h3>{{ index + 1 }}章</h3>
         </v-col>
-        <v-col cols="6" class="d-flex justify-center align-center">
+        <v-col cols="6" class="d-flex justify-center align-center ">
           <h3>{{ chapter.title }}</h3>
         </v-col>
         <v-col cols="2" class="d-flex justify-center align-center">
@@ -106,6 +111,9 @@ export default {
     purchasedItems() {
       return this.$store.getters['getPurchasedItems']
     },
+    recommendId() {
+      return this.$store.getters['getRecommendId']
+    },
   },
   methods: {
     purchase: function(chapterId) {
@@ -113,18 +121,20 @@ export default {
       alert('購入に成功しました！')
     },
     gotoBack: function() {
+      this.$store.commit('deleteRecommendId')
       this.$router.push({
         path: `/book_list`,
       })
     },
     gotoRead: function(epub, chapterId) {
+      this.$store.commit('deleteRecommendId')
       const epubPathArray = epub.split('/')
       //pathからファイル名だけ取り出し
       const epubFileName = epubPathArray[2]
       this.$router.push({
         path: `/read_screen/${this.$route.params['id']}/${chapterId}/${epubFileName}`,
       })
-    }
+    },
   },
 }
 </script>

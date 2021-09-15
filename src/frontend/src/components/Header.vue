@@ -5,7 +5,7 @@
     dark
   >
     <v-app-bar-title>
-      サービス名(仮)
+      {{ appName }}
     </v-app-bar-title>
   </v-app-bar>
 </template>
@@ -18,6 +18,16 @@ export default {
       type: String,
       default: ''
     }
-  }
+  },
+  data() {
+    return {
+      appName: "サービス名（仮）"
+    }
+  },
+  mounted: function() {
+    this.appName = this.color === 'orange'
+      ? '章分活'
+      : '眼力(シリョク)アゲたい⤴⤴⤴書店' 
+  },
 }
 </script>
